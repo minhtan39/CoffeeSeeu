@@ -1,0 +1,26 @@
+﻿@model IEnumerable<CoffeeSeeu.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Giỏ hàng của bạn</h2>
+@if (!Model.Any())
+{
+    <p>Chưa có sản phẩm nào.</p>
+}
+else
+{
+    <table>
+        <tr><th>Sản phẩm</th><th>Số lượng</th><th>Giá</th></tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@item.Quantity</td>
+                <td>@(item.Product.Price* item.Quantity) VND</td>
+            </tr>
+        }
+    </table>
+    <a href="/Cart/Checkout">Thanh toán</a>
+}

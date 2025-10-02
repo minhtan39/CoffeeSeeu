@@ -1,0 +1,18 @@
+﻿@model IEnumerable<CoffeeSeeu.Models.Product>
+@{
+    ViewData["Title"] = "Sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Danh sách sản phẩm</h2>
+<ul>
+    @foreach (var p in Model)
+    {
+        <li>
+            <img src="@p.ImageUrl" width="120" />
+            <b>@p.Name</b> - @p.Price VND
+            <a href="/Product/Details/@p.Id">Xem chi tiết</a> |
+            <a href="/Cart/Add/@p.Id">Thêm vào giỏ</a>
+        </li>
+    }
+</ul>
