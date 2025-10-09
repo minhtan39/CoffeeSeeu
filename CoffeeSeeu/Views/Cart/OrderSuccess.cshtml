@@ -1,0 +1,9 @@
+﻿@model CoffeeSeeu.Models.Order
+
+<h2>@ViewBag.Message</h2>
+
+<p><strong>Khách hàng:</strong> @Model.CustomerName</p>
+<p><strong>Địa chỉ:</strong> @Model.Address</p>
+<p><strong>Số điện thoại:</strong> @Model.Phone</p>
+
+<a class="btn btn-primary" asp-controller="Product" asp-action="Index">Tiếp tục mua hàng</a>

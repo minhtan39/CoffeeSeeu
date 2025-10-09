@@ -1,18 +1,69 @@
 ﻿@model IEnumerable<CoffeeSeeu.Models.Product>
+
 @{
-    ViewData["Title"] = "Sản phẩm";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Danh sách sản phẩm";
 }
 
-<h2>Danh sách sản phẩm</h2>
-<ul>
-    @foreach (var p in Model)
-    {
-        <li>
-            <img src="@p.ImageUrl" width="120" />
-            <b>@p.Name</b> - @p.Price VND
-            <a href="/Product/Details/@p.Id">Xem chi tiết</a> |
-            <a href="/Cart/Add/@p.Id">Thêm vào giỏ</a>
-        </li>
-    }
-</ul>
+<link href="~/css/product.css" rel="stylesheet" />
+
+<div class="container mt-4">
+    <!-- Header chỉ còn giỏ hàng -->
+    <div class="d-flex justify-content-end align-items-center mb-3 border-bottom pb-2">
+        <a href="/Cart" class="btn btn-outline-dark">
+            <i class="bi bi-cart"></i>
+        </a>
+    </div>
+
+    <!-- Thanh tìm kiếm -->
+    <div class="row mb-4">
+        <div class="col-md-8 offset-md-2">
+            <form asp-controller="Products" asp-action="Index" method="get" class="d-flex">
+                <input type="text"
+                       name="searchString"
+                       class="form-control rounded-pill me-2"
+                       placeholder="Tìm kiếm sản phẩm..."
+                       value="@ViewData["CurrentFilter"]" />
+                <button type="submit" class="btn btn-dark rounded-pill px-4">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grid sản phẩm -->
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card product-card h-100">
+                    <img src="@item.ImageUrl" alt="@item.Name" class="card-img-top product-img" />
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">@item.Name</h5>
+                        <p class="card-text text-muted">@item.Description</p>
+                        <p class="fw-bold text-danger">@item.Price.ToString("N0") ₫</p>
+
+                        @* Nếu có Rating thì mới hiện sao *@
+                        @if (item.GetType().GetProperty("Rating") != null)
+                        {
+                            <div class="rating mb-2">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= (int)item.GetType().GetProperty("Rating")!.GetValue(item)!)
+                                    {
+                                        <span>★</span>
+                                    }
+                                    else
+                                    {
+                                        <span>☆</span>
+                                    }
+                                }
+                            </div>
+                        }
+
+                        <a href="/Cart/Add/@item.Id" class="btn btn-dark mt-auto">Thêm vào giỏ</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

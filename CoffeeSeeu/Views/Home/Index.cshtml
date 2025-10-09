@@ -3,6 +3,78 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Chào mừng đến với Coffee SeeU</h2>
-<p>Thưởng thức hương vị cà phê đậm đà mỗi ngày ☕</p>
-<a href="/Product">Xem sản phẩm</a>
+<!-- Giới thiệu thương hiệu -->
+<section class="about">
+    <div class="about-container">
+        <div class="about-image">
+            <img src="~/img/decore2.jpg" alt="Về SeeU Coffee" />
+        </div>
+        <div class="about-text">
+            <h2>Về SeeU Coffee</h2>
+            <p>
+                SeeU được thành lập với niềm đam mê mang đến những trải nghiệm cà phê tuyệt vời nhất.
+                Chúng tôi tự hào về quy trình rang xay thủ công và lựa chọn những hạt cà phê chất lượng cao từ các vùng nguyên liệu nổi tiếng.
+            </p>
+            <p>
+                Mỗi ly cà phê tại SeeU không chỉ là thức uống mà còn là một tác phẩm nghệ thuật, thể hiện sự tận tâm và kỹ năng của những người thợ lành nghề.
+            </p>
+            <button class="btn">Khám phá thêm</button>
+        </div>
+    </div>
+</section>
+
+<section class="home-hero" style="display:flex;gap:40px;align-items:center;">
+    <div style="max-width: 500px;">
+        <h1 style="font-size: 2.5rem; font-weight: 700;">Khám phá hương vị cà phê SeeU</h1>
+        <p style="font-size: 1.1rem; margin: 20px 0;">
+            Tận hưởng những hạt cà phê chất lượng cao, rang xay thủ công và đầy đủ hương vị đặc trưng của Việt Nam.
+        </p>
+        <div>
+            <a href="/Product" class="btn" style="margin-right:12px;">Mua ngay</a>
+            <a href="/Home/About" class="btn btn-outline">Xem thêm</a>
+        </div>
+    </div>
+    <img src="/img/logo.jpg" alt="Coffee SeeU" style="width:500px; height:500px; object-fit:cover; border-radius: 15px; box-shadow: 0 0 10px #0074f7;">
+</section>
+
+<!-- ==================== SẢN PHẨM NỔI BẬT ==================== -->
+<section class="featured-products">
+    <h2>Sản phẩm nổi bật</h2>
+    <div class="products-grid">
+        <!-- Sản phẩm 1 -->
+        <div class="product-card">
+            <img src="~/img/cookies.jpg" alt="Arabica Premium" />
+            <h3>Arabica Premium</h3>
+            <p class="product-price">250.000đ</p>
+            <button class="btn">Thêm vào giỏ</button>
+        </div>
+
+        <!-- Sản phẩm 2 -->
+        <div class="product-card">
+            <img src="~/img/muoi.jpg" alt="Robusta Đậm Đà" />
+            <h3>Robusta Đậm Đà</h3>
+            <p class="product-price">200.000đ</p>
+            <button class="btn">Thêm vào giỏ</button>
+        </div>
+
+        <!-- Sản phẩm 3 -->
+        <div class="product-card">
+            <img src="~/img/bskem.jpg" alt="Cold Brew" />
+            <h3>Cold Brew</h3>
+            <p class="product-price">180.000đ</p>
+            <button class="btn">Thêm vào giỏ</button>
+        </div>
+
+        <!-- Sản phẩm 4 -->
+        <div class="product-card">
+            <img src="~/img/matcha.jpg" alt="Capuchino" />
+            <h3>Capuchino Hảo Hạng</h3>
+            <p class="product-price">220.000đ</p>
+            <button class="btn">Thêm vào giỏ</button>
+        </div>
+    </div>
+</section>
+
+
+
+

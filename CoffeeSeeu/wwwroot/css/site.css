@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -20,3 +20,28 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/*giao diện mua hàng*/
+
+h2 {
+    font-weight: bold;
+    color: #333;
+}
+
+.table {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.btn-success {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+}
+
+    .btn-success:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }

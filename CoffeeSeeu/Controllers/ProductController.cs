@@ -5,21 +5,18 @@ namespace CoffeeSeeu.Controllers
 {
     public class ProductController : Controller
     {
-        // Dữ liệu mẫu
-        private static readonly List<Product> _products = new()
+        public IActionResult Index()
         {
-            new Product { Id = 1, Name = "Cà phê sữa đá", Price = 30000, ImageUrl="/img/cafe1.jpg", Description="Cà phê sữa đá thơm ngon" },
-            new Product { Id = 2, Name = "Espresso", Price = 40000, ImageUrl="/img/cafe2.jpg", Description="Espresso đậm đà" },
-            new Product { Id = 3, Name = "Cappuccino", Price = 45000, ImageUrl="/img/cafe3.jpg", Description="Cappuccino béo ngậy" }
-        };
+            // Tạm thời mock dữ liệu sản phẩm (chưa dùng DB)
+            var products = new List<Product>
+            {
+                new Product { Id = 1, Name = "Cà phê hạt Arabica", Price = 120000, ImageUrl = "/images/product1.jpg" },
+                new Product { Id = 2, Name = "Cà phê hạt Robusta", Price = 95000, ImageUrl = "/images/product2.jpg" },
+                new Product { Id = 3, Name = "Cà phê sữa đá", Price = 45000, ImageUrl = "/images/product3.jpg" },
+                new Product { Id = 4, Name = "Cà phê pha phin", Price = 55000, ImageUrl = "/images/product4.jpg" }
+            };
 
-        public IActionResult Index() => View(_products);
-
-        public IActionResult Details(int id)
-        {
-            var product = _products.FirstOrDefault(p => p.Id == id);
-            if (product == null) return NotFound();
-            return View(product);
+            return View(products);
         }
     }
 }

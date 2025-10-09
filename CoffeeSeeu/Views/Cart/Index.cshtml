@@ -1,26 +1,38 @@
-﻿@model IEnumerable<CoffeeSeeu.Models.CartItem>
-@{
-    ViewData["Title"] = "Giỏ hàng";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿@model List<CoffeeSeeu.Models.CartItem>
 
-<h2>Giỏ hàng của bạn</h2>
+<h2 class="mb-4">🛒 Giỏ hàng của bạn</h2>
+
 @if (!Model.Any())
 {
-    <p>Chưa có sản phẩm nào.</p>
+    <p>Giỏ hàng đang trống. <a asp-controller="Product" asp-action="Index">Mua ngay</a></p>
 }
 else
 {
-    <table>
-        <tr><th>Sản phẩm</th><th>Số lượng</th><th>Giá</th></tr>
-        @foreach (var item in Model)
-        {
+    <table class="table table-striped table-bordered text-center align-middle">
+        <thead class="table-dark">
             <tr>
-                <td>@item.Product.Name</td>
-                <td>@item.Quantity</td>
-                <td>@(item.Product.Price* item.Quantity) VND</td>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th>Tổng</th>
             </tr>
-        }
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Product.Price.ToString("N0") đ</td>
+                    <td>@(item.Product.Price* item.Quantity).ToString("N0") đ</td>
+                </tr>
+            }
+        </tbody>
     </table>
-    <a href="/Cart/Checkout">Thanh toán</a>
+
+    <div class="text-end mt-3">
+        <a class="btn btn-success btn-lg" asp-controller="Cart" asp-action="Checkout">
+            Thanh toán
+        </a>
+    </div>
 }

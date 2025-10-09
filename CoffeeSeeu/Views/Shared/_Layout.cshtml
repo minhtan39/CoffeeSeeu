@@ -1,28 +1,80 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>@ViewData["Title"] - CoffeeSeeU</title>
+    <title>@ViewData["Title"] - SeeU Coffee</title>
     <link rel="stylesheet" href="~/css/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
     <header>
-        <h1>Coffee SeeU</h1>
+        <div class="logo">SeeU</div>
         <nav>
-            <a href="/">Trang chủ</a> |
-            <a href="/Product">Sản phẩm</a> |
-            <a href="/Cart">Giỏ hàng</a> |
-            <a href="/Home/About">Giới thiệu</a> |
-            <a href="/Home/Contact">Liên hệ</a> |
-            <a href="/Account/Login">Đăng nhập</a>
+            <ul>
+                <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                <li><a asp-controller="Product" asp-action="Index">Sản phẩm</a></li>
+                <li><a href="#">Về chúng tôi</a></li>
+                <li><a href="#">Liên hệ</a></li>
+            </ul>
         </nav>
+
+        <div class="auth-buttons">
+            <a href="/Account/Login" class="btn">Đăng nhập</a>
+            <a href="/Account/Register" class="btn btn-primary">Đăng ký</a>
+        </div>
     </header>
 
-    <main>
+
+    <main class="container">
         @RenderBody()
     </main>
 
-    <footer>
-        <p>&copy; 2025 CoffeeSeeU</p>
+    
+
+    <footer class="site-footer">
+        <div class="container footer-container">
+
+            <div class="footer-newsletter">
+                <h2>Đăng ký nhận tin</h2>
+                <p>Nhận thông tin về sản phẩm mới, khuyến mãi đặc biệt và các sự kiện cà phê từ SeeU.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Email của bạn" required />
+                    <button type="submit" class="btn btn-primary">Đăng ký</button>
+                </form>
+            </div>
+
+            <div class="footer-links">
+                <div>
+                    <h3>SeeU</h3>
+                    <p>Mang đến hương vị cà phê tuyệt vời nhất.</p>
+                </div>
+                <div>
+                    <h3>Sản phẩm</h3>
+                    <ul>
+                        <li><a href="#">Cà phê hạt</a></li>
+                        <li><a href="#">Cà phê xay</a></li>
+                        <li><a href="#">Phụ kiện</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Hỗ trợ</h3>
+                    <ul>
+                        <li><a href="#">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Liên hệ</h3>
+                    <p>02 ngõ 13, Hải Thượng Lãn Ông</p>
+                    <p>TP. Hà Tĩnh</p>
+                    <p>seeucoffee.311@gmail.com</p>
+                    <p>0818115578</p>
+                </div>
+            </div>
+
+            <hr />
+            <p class="footer-copy">&copy; 2025 SeeU Coffee. Tất cả quyền được bảo lưu.</p>
+        </div>
     </footer>
 </body>
 </html>

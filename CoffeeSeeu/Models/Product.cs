@@ -15,5 +15,7 @@ namespace CoffeeSeeu.Models
         public decimal Price { get; set; }
 
         public string ImageUrl { get; set; } = "/img/default.png";
+        public int Rating { get; set; } = 0; // 0–5 sao
+
     }
 }
