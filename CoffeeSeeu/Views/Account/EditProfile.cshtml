@@ -1,0 +1,57 @@
+﻿@model CoffeeSeeu.Models.User
+@{
+    ViewData["Title"] = "Chỉnh sửa tài khoản";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4 p-4" style="max-width: 700px; margin: 0 auto;">
+        <h3 class="text-center mb-4">Chỉnh sửa thông tin cá nhân</h3>
+
+        <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+            <div class="text-center mb-4">
+                <img id="previewAvatar" src="@Model.AvatarUrl" alt="Avatar"
+                     class="rounded-circle shadow"
+                     style="width: 120px; height: 120px; object-fit: cover;">
+                <div class="mt-2">
+                    <label class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-upload"></i> Chọn ảnh mới
+                        <input type="file" name="AvatarFile" id="avatarInput" accept="image/*" hidden>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Họ và tên</label>
+                <input asp-for="FullName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Số điện thoại</label>
+                <input asp-for="Phone" class="form-control" />
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success px-4 rounded-pill">Lưu thay đổi</button>
+                <a asp-action="Profile" class="btn btn-outline-secondary px-4 rounded-pill ms-2">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const avatarInput = document.getElementById("avatarInput");
+        const previewAvatar = document.getElementById("previewAvatar");
+        avatarInput.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                previewAvatar.src = URL.createObjectURL(file);
+            }
+        });
+    </script>
+}

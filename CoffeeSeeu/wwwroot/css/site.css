@@ -45,3 +45,28 @@ h2 {
         background-color: #218838;
         transform: scale(1.05);
     }
+    /*giao diện chỉnh sửa tổng thể profile*/
+body {
+    background-color: #f7f6f3;
+}
+
+.card {
+    background: #fffdfb;
+}
+
+.btn-primary {
+    background-color: #6f4e37; /* nâu cafe */
+    border: none;
+}
+
+    .btn-primary:hover {
+        background-color: #5b3f2e;
+    }
+
+.btn-success {
+    background-color: #3c8d40;
+}
+
+.rounded-pill {
+    border-radius: 50px !important;
+}
