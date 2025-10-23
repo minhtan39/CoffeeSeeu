@@ -1,0 +1,12 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Trang quản trị";
+    var username = HttpContextAccessor.HttpContext.Session.GetString("Username");
+}
+
+<div class="container mt-5">
+    <h1>Chào mừng, @username!</h1>
+    <p>Bạn đang đăng nhập với quyền <strong>Admin</strong>.</p>
+</div>

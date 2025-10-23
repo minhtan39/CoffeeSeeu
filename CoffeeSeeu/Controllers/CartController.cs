@@ -13,7 +13,8 @@ namespace CoffeeSeeu.Controllers
         {
             // Demo: thêm sản phẩm giả lập (sau này lấy từ DB)
             var product = new Product { Id = id, Name = "Sản phẩm " + id, Price = 20000 };
-            var item = cart.FirstOrDefault(c => c.Product.Id == id);
+            var item = cart.FirstOrDefault(c => c.Product != null && c.Product.Id == id);
+
             if (item == null)
                 cart.Add(new CartItem { Product = product, Quantity = 1 });
             else
@@ -38,7 +39,7 @@ namespace CoffeeSeeu.Controllers
                 return View(order); // Nếu sai dữ liệu thì hiển thị lại form
             }
 
-            // 👉 Sau này sẽ lưu vào database. Tạm thời chỉ xóa giỏ hàng
+            // Sau này sẽ lưu vào database. Tạm thời chỉ xóa giỏ hàng
             cart.Clear();
 
             ViewBag.Message = "Đặt hàng thành công! Cảm ơn bạn đã mua hàng.";

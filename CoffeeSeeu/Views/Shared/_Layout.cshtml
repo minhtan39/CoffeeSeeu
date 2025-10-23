@@ -1,80 +1,133 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@using CoffeeSeeu.Models
+@inject IHttpContextAccessor HttpContextAccessor
+@inject CoffeeSeeu.Data.ApplicationDbContext Db
+
+<!DOCTYPE html>
+<html lang="vi">
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - SeeU Coffee</title>
     <link rel="stylesheet" href="~/css/style.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
 </head>
+
 <body>
-    <header>
-        <div class="logo">SeeU</div>
+    <header class="d-flex justify-content-between align-items-center px-4 py-2 border-bottom bg-light">
+        <div class="logo fs-3 fw-bold" style="color:#333;">SeeU</div>
+
         <nav>
-            <ul>
-                <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                <li><a asp-controller="Product" asp-action="Index">Sản phẩm</a></li>
-                <li><a href="#">Về chúng tôi</a></li>
-                <li><a href="#">Liên hệ</a></li>
+            <ul class="nav">
+                <li class="nav-item"><a asp-controller="Home" asp-action="Index" class="nav-link text-dark">Trang chủ</a></li>
+                <li class="nav-item"><a asp-controller="Product" asp-action="Index" class="nav-link text-dark">Sản phẩm</a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-dark">Về chúng tôi</a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-dark">Liên hệ</a></li>
             </ul>
         </nav>
 
-        <div class="auth-buttons">
-            <a href="/Account/Login" class="btn">Đăng nhập</a>
-            <a href="/Account/Register" class="btn btn-primary">Đăng ký</a>
+        <div class="auth-buttons d-flex align-items-center">
+            @{
+                var username = HttpContextAccessor.HttpContext?.Session.GetString("Username");
+                var role = HttpContextAccessor.HttpContext?.Session.GetString("Role");
+                string avatarPath = "/img/default-avatar.png";
+
+                if (!string.IsNullOrEmpty(username))
+                {
+                    var user = Db.Users.FirstOrDefault(u => u.Username == username);
+                    if (user != null && !string.IsNullOrEmpty(user.AvatarUrl))
+                    {
+                        avatarPath = user.AvatarUrl;
+                    }
+                }
+            }
+
+            @if (!string.IsNullOrEmpty(username))
+            {
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle p-0 d-flex align-items-center text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="@avatarPath" alt="Avatar"
+                             class="rounded-circle me-2"
+                             style="width:40px;height:40px;object-fit:cover;border:2px solid #fff;">
+                        <span style="font-weight:500;">@username</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="/Account/Profile">Thông tin cá nhân</a></li>
+                        <li><a class="dropdown-item" href="/Account/Edit">Chỉnh sửa tài khoản</a></li>
+
+                        @if (role == "Admin")
+                        {
+                            <li><a class="dropdown-item text-primary fw-semibold" href="/Admin/Index">Trang quản trị</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                        }
+
+                        <li>
+                            <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
+                                Đăng xuất
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <a href="/Account/Login" class="btn btn-outline-dark me-2">Đăng nhập</a>
+                <a href="/Account/Register" class="btn btn-primary">Đăng ký</a>
+            }
         </div>
     </header>
 
-
-    <main class="container">
+    <main class="container my-4">
         @RenderBody()
     </main>
 
-    
-
-    <footer class="site-footer">
+    <footer class="site-footer bg-light py-4 mt-auto">
         <div class="container footer-container">
-
-            <div class="footer-newsletter">
+            <div class="footer-newsletter mb-4">
                 <h2>Đăng ký nhận tin</h2>
                 <p>Nhận thông tin về sản phẩm mới, khuyến mãi đặc biệt và các sự kiện cà phê từ SeeU.</p>
-                <form class="newsletter-form">
-                    <input type="email" placeholder="Email của bạn" required />
+                <form class="newsletter-form d-flex">
+                    <input type="email" placeholder="Email của bạn" class="form-control me-2" required />
                     <button type="submit" class="btn btn-primary">Đăng ký</button>
                 </form>
             </div>
 
-            <div class="footer-links">
-                <div>
+            <div class="footer-links d-flex justify-content-between flex-wrap mt-4">
+                <div class="mb-3">
                     <h3>SeeU</h3>
                     <p>Mang đến hương vị cà phê tuyệt vời nhất.</p>
                 </div>
-                <div>
+                <div class="mb-3">
                     <h3>Sản phẩm</h3>
-                    <ul>
-                        <li><a href="#">Cà phê hạt</a></li>
-                        <li><a href="#">Cà phê xay</a></li>
-                        <li><a href="#">Phụ kiện</a></li>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-dark text-decoration-none">Cà phê hạt</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Cà phê xay</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Phụ kiện</a></li>
                     </ul>
                 </div>
-                <div>
+                <div class="mb-3">
                     <h3>Hỗ trợ</h3>
-                    <ul>
-                        <li><a href="#">Hướng dẫn mua hàng</a></li>
-                        <li><a href="#">Chính sách đổi trả</a></li>
-                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-dark text-decoration-none">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Chính sách đổi trả</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Câu hỏi thường gặp</a></li>
                     </ul>
                 </div>
-                <div>
+                <div class="mb-3">
                     <h3>Liên hệ</h3>
                     <p>02 ngõ 13, Hải Thượng Lãn Ông</p>
                     <p>TP. Hà Tĩnh</p>
                     <p>seeucoffee.311@gmail.com</p>
-                    <p>0818115578</p>
+                    <p>0818 115 578</p>
                 </div>
             </div>
 
             <hr />
-            <p class="footer-copy">&copy; 2025 SeeU Coffee. Tất cả quyền được bảo lưu.</p>
+            <p class="footer-copy text-center text-muted mb-0">&copy; 2025 SeeU Coffee. Tất cả quyền được bảo lưu.</p>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
