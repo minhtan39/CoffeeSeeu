@@ -1,5 +1,6 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using CoffeeSeeu.Models;
+using CoffeeSeeu.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeSeeu.Controllers
@@ -7,46 +8,27 @@ namespace CoffeeSeeu.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        // Trang ch?
+        // Trang chủ
         public IActionResult Index()
         {
-            return View();
+            // Lấy 4 sản phẩm đầu tiên từ database để hiển thị
+            var featuredProducts = _context.Products.Take(4).ToList();
+            return View(featuredProducts);
         }
 
-        // Trang s?n ph?m
-        public IActionResult Products()
-        {
-            return View();
-        }
+        public IActionResult About() => View();
 
-        // Trang "V? ch�ng t�i"
-        public IActionResult About()
-        {
-            return View();
-        }
+        public IActionResult Contact() => View();
 
-        // Trang li�n h?
-        public IActionResult Contact()
-        {
-            return View();
-        }
-
-        // Trang gi? h�ng
-        public IActionResult Cart()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult Privacy() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

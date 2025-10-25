@@ -17,7 +17,7 @@
     <!-- Thanh tìm kiếm -->
     <div class="row mb-4">
         <div class="col-md-8 offset-md-2">
-            <form asp-controller="Products" asp-action="Index" method="get" class="d-flex">
+            <form asp-controller="Product" asp-action="Index" method="get" class="d-flex">
                 <input type="text"
                        name="searchString"
                        class="form-control rounded-pill me-2"
@@ -42,23 +42,13 @@
                         <p class="card-text text-muted">@item.Description</p>
                         <p class="fw-bold text-danger">@item.Price.ToString("N0") ₫</p>
 
-                        @* Nếu có Rating thì mới hiện sao *@
-                        @if (item.GetType().GetProperty("Rating") != null)
-                        {
-                            <div class="rating mb-2">
-                                @for (int i = 1; i <= 5; i++)
-                                {
-                                    if (i <= (int)item.GetType().GetProperty("Rating")!.GetValue(item)!)
-                                    {
-                                        <span>★</span>
-                                    }
-                                    else
-                                    {
-                                        <span>☆</span>
-                                    }
-                                }
-                            </div>
-                        }
+                        <!-- Phần đánh giá sao -->
+                        <div class="rating mb-2" data-product-id="@item.Id" data-current-rating="@item.Rating">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span class="star @(i <= item.Rating ? "text-warning" : "text-secondary")" data-value="@i">★</span>
+                            }
+                        </div>
 
                         <a href="/Cart/Add/@item.Id" class="btn btn-dark mt-auto">Thêm vào giỏ</a>
                     </div>
@@ -67,3 +57,60 @@
         }
     </div>
 </div>
+
+<style>
+    .rating .star {
+        cursor: pointer;
+        font-size: 20px;
+        transition: color 0.2s ease-in-out;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll(".rating").forEach(ratingDiv => {
+            const productId = ratingDiv.dataset.productId;
+            const stars = ratingDiv.querySelectorAll(".star");
+            let currentRating = parseInt(ratingDiv.dataset.currentRating);
+
+            // Hover hiệu ứng sáng dần
+            stars.forEach((star, index) => {
+                star.addEventListener("mouseover", () => {
+                    stars.forEach((s, i) => s.classList.toggle("text-warning", i <= index));
+                });
+
+                star.addEventListener("mouseout", () => {
+                    stars.forEach((s, i) => s.classList.toggle("text-warning", i < currentRating));
+                    stars.forEach((s, i) => s.classList.toggle("text-secondary", i >= currentRating));
+                });
+
+                // Khi click để đánh giá
+                star.addEventListener("click", async () => {
+                    const rating = index + 1;
+
+                    const response = await fetch(`/Product/RateProduct`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ productId, rating })
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            currentRating = rating;
+                            ratingDiv.dataset.currentRating = rating;
+                            stars.forEach((s, i) => {
+                                s.classList.toggle("text-warning", i < rating);
+                                s.classList.toggle("text-secondary", i >= rating);
+                            });
+                        }
+                    } else {
+                        alert("Không thể lưu đánh giá, vui lòng thử lại!");
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -12,11 +12,11 @@ internal class Program
         // Cho phép truy cập HttpContext
         builder.Services.AddHttpContextAccessor();
 
-        // 1️⃣ Kết nối Database
+        // 1️. Kết nối Database
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        // 2️⃣ Cấu hình Cookie Authentication
+        // 2️. Cấu hình Cookie Authentication
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
@@ -30,7 +30,7 @@ internal class Program
                 options.Cookie.SecurePolicy = CookieSecurePolicy.None;
             });
 
-        // 3️⃣ Cấu hình Session
+        // 3️. Cấu hình Session
         builder.Services.AddSession(options =>
         {
             options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -41,14 +41,14 @@ internal class Program
             options.Cookie.SecurePolicy = CookieSecurePolicy.None;
         });
 
-        // 4️⃣ Thêm Authorization và MVC
+        // 4️. Thêm Authorization và MVC
         builder.Services.AddAuthorization();
         builder.Services.AddControllersWithViews();
 
         //  Chỉ build 1 lần ở đây
         var app = builder.Build();
 
-        // 5️⃣ Middleware
+        // 5️ Middleware
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Home/Error");
@@ -65,12 +65,12 @@ internal class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // 6️⃣ Routing
+        // 6️. Routing
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
-        // 7️⃣ Tạo admin mặc định
+        // 7️. Tạo admin mặc định
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -94,7 +94,7 @@ internal class Program
             }
         }
 
-        // ✅ Chạy app
+        // Chạy app
         app.Run();
     }
 }
