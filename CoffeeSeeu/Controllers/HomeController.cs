@@ -19,10 +19,15 @@ namespace CoffeeSeeu.Controllers
         // Trang chủ
         public IActionResult Index()
         {
-            // Lấy 4 sản phẩm đầu tiên từ database để hiển thị
-            var featuredProducts = _context.Products.Take(4).ToList();
+            // Lấy 4 sản phẩm có Rating cao nhất làm "sản phẩm nổi bật"
+            var featuredProducts = _context.Products
+                .OrderByDescending(p => p.Rating)
+                .Take(4)
+                .ToList();
+
             return View(featuredProducts);
         }
+
 
         public IActionResult About() => View();
 

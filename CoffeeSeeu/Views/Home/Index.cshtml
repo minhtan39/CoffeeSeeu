@@ -50,6 +50,15 @@
                 <div class="product-card">
                     <img src="@product.ImageUrl" alt="@product.Name" />
                     <h3>@product.Name</h3>
+
+                    <!-- ⭐ Hiển thị sao đánh giá -->
+                    <div class="rating" style="margin: 5px 0;">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span class="@(i <= product.Rating ? "text-warning" : "text-secondary")" style="font-size:18px;">★</span>
+                        }
+                    </div>
+
                     <p class="product-price">@product.Price.ToString("N0")đ</p>
                     <button class="btn">Thêm vào giỏ</button>
                 </div>
@@ -61,3 +70,14 @@
         }
     </div>
 </section>
+
+<!-- CSS nhỏ cho sao -->
+<style>
+    .rating .text-warning {
+        color: gold;
+    }
+
+    .rating .text-secondary {
+        color: #ccc;
+    }
+</style>
