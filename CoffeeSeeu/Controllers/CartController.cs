@@ -1,18 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CoffeeSeeu.Models;
+using CoffeeSeeu.Data;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace CoffeeSeeu.Controllers
 {
     public class CartController : Controller
     {
+        private readonly ApplicationDbContext _context;
         private static List<CartItem> cart = new();
+
+        public CartController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Index() => View(cart);
 
         public IActionResult Add(int id)
         {
-            // Demo: thêm sản phẩm giả lập (sau này lấy từ DB)
-            var product = new Product { Id = id, Name = "Sản phẩm " + id, Price = 20000 };
+            // 🔹 Lấy sản phẩm thật từ database
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            if (product == null)
+                return NotFound();
+
+            // 🔹 Kiểm tra xem sản phẩm đã có trong giỏ chưa
             var item = cart.FirstOrDefault(c => c.Product != null && c.Product.Id == id);
 
             if (item == null)

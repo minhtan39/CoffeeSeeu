@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace YourProjectName.Models
+namespace CoffeeSeeu.Models
 {
     public class Image
     {
         public int Id { get; set; }
 
         [Required]
-        public string ImagePath { get; set; } // Đường dẫn ảnh (~/images/abc.jpg)
+        public string? ImagePath { get; set; }    // Đường dẫn ảnh (~/images/abc.jpg)
 
         public string? Description { get; set; }
 

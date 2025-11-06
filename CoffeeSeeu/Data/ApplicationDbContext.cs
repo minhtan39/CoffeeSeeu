@@ -1,7 +1,7 @@
 ﻿using CoffeeSeeu.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using YourProjectName.Models;
+
 
 namespace CoffeeSeeu.Data
 {
