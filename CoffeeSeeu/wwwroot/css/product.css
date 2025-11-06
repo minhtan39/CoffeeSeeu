@@ -5,7 +5,7 @@
     padding: 20px;
 }
 
-/* === Header: chỉ có giỏ hàng === */
+/* === Header: chỉ có giỏ hàng (keepsafe) === */
 .header {
     display: flex;
     justify-content: flex-end;
@@ -27,49 +27,134 @@
         color: #fff;
     }
 
-/* === Thanh tìm kiếm === */
-.search-bar {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
+/* =======================================
+   SEARCH BAR (ICON OUTSIDE)
+======================================= */
+
+.search-wrapper {
+    position: relative;
 }
 
-    .search-bar form {
-        display: flex;
-        width: 60%;
-        border: 1px solid #ccc;
-        border-radius: 25px;
-        overflow: hidden;
+/* 1) Nới khoảng cách cho kính lúp (nằm ngoài input)
+   tăng right (đi ra ngoài hơn) và giảm shadow để nhẹ nhàng hơn */
+.search-input {
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid #e9e9e9;
+    padding-left: 20px;
+    padding-right: 32px; /* tăng chút để text không chạm */
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.search-btn-outside {
+    position: absolute;
+    top: 50%;
+    right: -50px; 
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.06); /* nhẹ hơn */
+    cursor: pointer;
+    transition: 0.18s ease, transform 0.12s ease;
+    z-index: 5; /* đảm bảo nổi trên input */
+}
+
+    .search-btn-outside:hover {
+        transform: translateY(-50%) translateY(-2px) scale(1.04);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.1);
     }
 
-    .search-bar input {
-        flex: 1;
-        padding: 10px 15px;
-        border: none;
-        outline: none;
+
+    .search-btn-outside i {
+        font-size: 17px;
+        color: #333;
     }
 
-    .search-bar button {
-        background-color: #333;
-        color: #fff;
-        border: none;
-        padding: 0 18px;
-        cursor: pointer;
-        transition: 0.2s;
+/* responsive: icon nhỏ lại  */
+@media (max-width: 576px) {
+    .search-btn-outside {
+        right: -10px;
+        width: 38px;
+        height: 38px;
     }
 
-        .search-bar button:hover {
-            background-color: #555;
-        }
+    .search-input {
+        height: 44px;
+    }
+}
 
-/* === Grid sản phẩm === */
+/* =======================================
+   HEADER STICKER (giỏ hàng) — refined
+======================================= */
+/* 2) Lùi giỏ hàng vào trong để không chạm nút Đăng ký */
+.header-stickers {
+    position: absolute;
+    top: 50%;
+    right: -36px; /* <-- tăng khoảng cách từ mép phải (trước là 22px) */
+    transform: translateY(-50%);
+    z-index: 1200;
+}
+
+.sticker-cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+    color: #333;
+    text-decoration: none;
+    transition: 0.18s ease, transform 0.12s ease;
+}
+
+
+    .sticker-cart i {
+        font-size: 18px;
+    }
+
+    .sticker-cart:hover {
+        transform: scale(1.03);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+    }
+
+.sticker-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #e53935;
+    color: #fff;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* =======================================
+   GRID SẢN PHẨM
+======================================= */
+
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 
-/* === Product Card Style (giữ nguyên + bổ sung) === */
+/* CARD SP */
 .product-card {
     border-radius: 10px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -139,4 +224,32 @@
 
     .add-cart-btn:hover {
         background: #555;
+    }
+
+/* Rating stars – moved here */
+.rating .star {
+    cursor: pointer;
+    font-size: 20px;
+    transition: color 0.2s ease-in-out;
+}
+/* === Autocomplete suggestion styles === */
+.suggest-box {
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+    .suggest-box .list-group-item {
+        border: none;
+        padding: 10px 14px;
+    }
+
+        .suggest-box .list-group-item:hover {
+            background: #f8f9fa;
+        }
+
+    .suggest-box strong {
+        color: #111;
     }

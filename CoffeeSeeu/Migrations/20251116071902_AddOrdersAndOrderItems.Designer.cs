@@ -4,6 +4,7 @@ using CoffeeSeeu.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoffeeSeeu.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116071902_AddOrdersAndOrderItems")]
+    partial class AddOrdersAndOrderItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,7 +153,6 @@ namespace CoffeeSeeu.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Username")
@@ -305,7 +307,7 @@ namespace CoffeeSeeu.Migrations
                             Id = 1,
                             AvatarUrl = "/img/default-avatar.png",
                             Email = "admin@coffeeseeu.com",
-                            Password = "AQAAAAIAAYagAAAAEAPnVjHaVrnwwvttH4wSY3j4o/rsIU80XE7a4vgsyAPV0nfYzPEOXu0lytnFv/aWgQ==",
+                            Password = "AQAAAAIAAYagAAAAEEWNb0NW6F3YvJTwH0UqFVDaUXbk1lgF1Y47VKyM+E2lwJweaYv2vHFets9vwuah1A==",
                             Role = "Admin",
                             Username = "admin"
                         });

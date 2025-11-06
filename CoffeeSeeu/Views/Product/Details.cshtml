@@ -1,0 +1,33 @@
+﻿@model CoffeeSeeu.Models.Product
+
+@{
+    ViewData["Title"] = Model?.Name ?? "Chi tiết sản phẩm";
+}
+
+<link href="~/css/product.css" rel="stylesheet" />
+
+<div class="container mt-4">
+    @if (Model == null)
+    {
+        <div class="alert alert-warning">
+            Sản phẩm không tồn tại hoặc đã bị xóa.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded" />
+            </div>
+            <div class="col-md-6">
+                <h1 class="fw-bold">@Model.Name</h1>
+                <p class="text-muted">@Model.Description</p>
+                <p class="h4 text-danger fw-bold">@Model.Price.ToString("N0") ₫</p>
+
+                <div class="mb-3">
+                    <a href="/Cart/Add/@Model.Id" class="btn btn-dark">Thêm vào giỏ</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
