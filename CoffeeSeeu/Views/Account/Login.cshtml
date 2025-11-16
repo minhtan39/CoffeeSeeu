@@ -1,20 +1,48 @@
 ﻿@{
     ViewData["Title"] = "Đăng nhập";
 }
-<h2>Đăng nhập</h2>
 
+<!-- ============================================================================
+     VIEW: Đăng nhập tài khoản
+     - Người dùng nhập username + password
+     - Gửi POST → Account/Login
+============================================================================ -->
+
+<h2 class="mb-3">Đăng nhập</h2>
+
+<!-- Form đăng nhập -->
 <form asp-action="Login" method="post">
-    <div class="form-group">
+
+    <!-- Nhập tên đăng nhập -->
+    <div class="form-group mb-3">
         <label>Tên đăng nhập:</label>
-        <input name="username" class="form-control" />
+        <input name="username"
+               class="form-control"
+               placeholder="Nhập tên đăng nhập..." />
     </div>
-    <div class="form-group">
+
+    <!-- Nhập mật khẩu -->
+    <div class="form-group mb-3">
         <label>Mật khẩu:</label>
-        <input name="password" type="password" class="form-control" />
+        <input name="password"
+               type="password"
+               class="form-control"
+               placeholder="Nhập mật khẩu..." />
     </div>
-    <br />
-    <button type="submit" class="btn btn-success">Đăng nhập</button>
+
+    <!-- Nút đăng nhập -->
+    <button type="submit" class="btn btn-success">
+        Đăng nhập
+    </button>
 </form>
 
-<p style="color:red">@ViewBag.Error</p>
-<p>Chưa có tài khoản? <a asp-action="Register">Đăng ký</a></p>
+<!-- Hiển thị lỗi đăng nhập -->
+<p class="mt-2" style="color:red;">
+    @ViewBag.Error
+</p>
+
+<!-- Điều hướng sang trang đăng ký -->
+<p class="mt-3">
+    Chưa có tài khoản?
+    <a asp-action="Register">Đăng ký</a>
+</p>

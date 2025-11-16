@@ -3,17 +3,28 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CoffeeSeeu.Models
 {
+    /* ============================================================================
+     *  Model: Album
+     *  Mục đích: Đại diện cho một bộ sưu tập (album) chứa nhiều hình ảnh
+     *  Ứng dụng: Hiển thị hình ảnh không gian quán, đội ngũ nhân viên, menu...
+     * ============================================================================ */
+
     public class Album
     {
+        // Khóa chính của album
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string? Name { get; set; }  // Ví dụ: "Không gian quán", "Menu", "Nhân viên"
+        // Tên album (bắt buộc nhập, tối đa 100 ký tự)
+        [Required(ErrorMessage = "Tên album không được để trống")]
+        [StringLength(100, ErrorMessage = "Tên album không được vượt quá 100 ký tự")]
+        public string? Name { get; set; }
+        // Ví dụ: "Không gian quán", "Đội ngũ", "Menu"
 
+        // Mô tả ngắn cho album (không bắt buộc)
         public string? Description { get; set; }
 
-        // Liên kết 1-nhiều với ảnh
+        // Quan hệ 1 - nhiều:
+        // Một album chứa nhiều ảnh (List<Image>)
         public List<Image>? Images { get; set; }
     }
 }

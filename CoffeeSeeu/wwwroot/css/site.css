@@ -1,39 +1,57 @@
-﻿html {
-  font-size: 14px;
+﻿/* ===================================================================
+
+ * Mục đích   : Các quy tắc cơ bản cho font, responsive, focus states,
+ *              giao diện mua hàng và style chung cho button/card.
+
+ * =================================================================== */
+
+/* ===== Cỡ chữ cơ bản =====
+   - Desktop lớn: 16px
+   - Mobile/ nhỏ: 14px (kế thừa theo media query) */
+html {
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
+/* ===== Focus state cho nút / input =====
+   - Thêm outline nhẹ màu trắng + viền xanh để dễ nhìn khi focus (trợ năng) */
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+/* ===== Cấu trúc trang để footer nằm đáy =====
+   - html có min-height, body có margin-bottom để tránh chèn footer */
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
-/*giao diện mua hàng*/
+/* ========== GIAO DIỆN MUA HÀNG / BẢNG SẢN PHẨM ========== */
 
+/* Tiêu đề các trang liên quan đến mua hàng */
 h2 {
     font-weight: bold;
     color: #333;
 }
 
+/* Bảng hiển thị đơn/giỏ:
+   - nền trắng, bo góc, overflow hidden để bo góc ảnh/row */
 .table {
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
 }
 
+/* Nút xác nhận / thanh toán chuẩn (màu xanh success) */
 .btn-success {
     padding: 10px 20px;
     border-radius: 8px;
@@ -41,33 +59,41 @@ h2 {
     transition: all 0.2s ease;
 }
 
+    /* Hover effect cho btn-success: phóng to nhẹ và đổi màu đậm hơn */
     .btn-success:hover {
         background-color: #218838;
         transform: scale(1.05);
     }
-    /*giao diện chỉnh sửa tổng thể profile*/
+
+/* ========== GIAO DIỆN PROFILE / CARD CHUNG ==========
+   - Background trang nhẹ, card sáng nhẹ */
+/* Toàn trang dùng nền nhạt để tách vùng nội dung */
 body {
     background-color: #f7f6f3;
 }
 
+/* Thẻ card: nền sáng hơn (trông sạch, gần trắng) */
 .card {
     background: #fffdfb;
 }
 
+/* Nút chính (primary) đổi thành tông nâu cà phê */
 .btn-primary {
     background-color: #6f4e37; /* nâu cafe */
     border: none;
 }
 
+    /* Hover cho nút primary: tối màu hơn một chút */
     .btn-primary:hover {
         background-color: #5b3f2e;
     }
 
+/* btn-success (trong phần profile/ form) set màu cố định */
 .btn-success {
     background-color: #3c8d40;
 }
 
+/* Lớp bo tròn pill (sử dụng lại từ Bootstrap) */
 .rounded-pill {
     border-radius: 50px !important;
 }
-

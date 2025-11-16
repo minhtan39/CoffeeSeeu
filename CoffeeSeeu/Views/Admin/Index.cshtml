@@ -1,12 +1,62 @@
-﻿@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor HttpContextAccessor
-
-@{
+﻿@{
     ViewData["Title"] = "Trang quản trị";
-    var username = HttpContextAccessor.HttpContext.Session.GetString("Username");
 }
 
-<div class="container mt-5">
-    <h1>Chào mừng, @username!</h1>
-    <p>Bạn đang đăng nhập với quyền <strong>Admin</strong>.</p>
+<!-- ============================================================================
+     VIEW: Dashboard dành cho Admin
+     - Hiển thị thống kê tổng quan: Sản phẩm, Người dùng, Đơn hàng
+     - Điều hướng nhanh tới các chức năng quản lý
+============================================================================ -->
+
+<h1 class="mb-4">Chào mừng, admin!</h1>
+
+<div class="row">
+
+    <!-- ====== Card thống kê sản phẩm ====== -->
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Sản phẩm</h5>
+
+            <!-- Tổng số sản phẩm -->
+            <p class="display-6">@ViewBag.ProductCount</p>
+
+            <!-- Điều hướng sang trang quản lý sản phẩm -->
+            <a class="btn btn-sm btn-outline-primary" asp-action="Products">
+                Quản lý sản phẩm
+            </a>
+        </div>
+    </div>
+
+    <!-- ====== Card thống kê người dùng ====== -->
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Người dùng</h5>
+
+            <!-- Tổng số tài khoản trong hệ thống -->
+            <p class="display-6">@ViewBag.UserCount</p>
+
+            <!-- Điều hướng sang trang quản lý tài khoản -->
+            <a class="btn btn-sm btn-outline-primary" asp-action="Users">
+                Quản lý tài khoản
+            </a>
+        </div>
+    </div>
+
+    <!-- ====== Card thống kê đơn hàng ====== -->
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Đơn hàng</h5>
+
+            <!-- Tổng số đơn đặt hàng -->
+            <p class="display-6">@ViewBag.OrderCount</p>
+
+            <!-- Tạm thời trỏ về chính trang Admin (vì chưa có trang Orders) -->
+            <a class="btn btn-sm btn-outline-primary" asp-controller="Admin" asp-action="Index">
+                Xem đơn hàng
+            </a>
+        </div>
+    </div>
+
 </div>
+
+<hr />

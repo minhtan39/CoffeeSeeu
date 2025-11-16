@@ -1,8 +1,16 @@
-﻿/* Reset */
+﻿/* ===================================================================
+
+ * Mục đích   : Chứa toàn bộ style chính của giao diện website
+
+ * =================================================================== */
+
+
+/* RESET CSS – chuẩn hóa lại khoảng cách và box-sizing */
 * {
     box-sizing: border-box;
 }
 
+/* Cấu hình font và màu nền chung của trang */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -11,38 +19,47 @@ body {
     color: #111;
 }
 
+/* Xóa gạch chân mặc định của thẻ a */
 a {
     text-decoration: none;
     color: inherit;
 }
 
+/* Container giới hạn chiều rộng cho nội dung */
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* Header */
+
+/* ===========================================================
+   HEADER CHÍNH – FIXED TRÊN CÙNG KHI CUỘN TRANG
+   =========================================================== */
 header {
-    position: fixed; /* cố định khi cuộn */
+    position: fixed; /* giữ header cố định */
     top: 0;
     left: 0;
     width: 100%;
-    height: 60px; /* chỉnh chiều cao header */
+    height: 60px; /* chiều cao header */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #fff; /* màu nền header */
+    background: #fff;
     padding: 0 30px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* bóng mờ nhẹ */
-    z-index: 1000; /* nổi lên trên các phần khác */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* bóng mờ */
+    z-index: 1000;
 }
 
+/* Đẩy nội dung xuống thấp để không bị header che */
 main.container {
-    margin-top: 80px; /* đẩy nội dung xuống dưới, tránh bị header che */
+    margin-top: 80px;
 }
-/*đăng nhập/đăngký*/
 
+
+/* ===========================================================
+   NÚT ĐĂNG NHẬP – ĐĂNG KÝ TRÊN HEADER
+   =========================================================== */
 .auth-buttons {
     display: flex;
     gap: 12px;
@@ -58,7 +75,7 @@ main.container {
         font-size: 15px;
     }
 
-/* Nút đăng nhập */
+/* Nút đăng nhập – kiểu viền */
 .btn-login {
     border: 2px solid #333;
     color: #333;
@@ -70,7 +87,7 @@ main.container {
         color: #fff;
     }
 
-/* Nút đăng ký */
+/* Nút đăng ký – màu đỏ chủ đạo */
 .btn-register {
     background: #ff4d4d;
     color: #fff;
@@ -83,13 +100,15 @@ main.container {
     }
 
 
-
-/* Section giới thiệu */
+/* ===========================================================
+   SECTION GIỚI THIỆU – ABOUT
+   =========================================================== */
 .about {
     padding: 60px 0;
     background: #f9f9f9;
 }
 
+/* Bố cục hình + nội dung */
 .about-container {
     display: flex;
     align-items: center;
@@ -97,9 +116,10 @@ main.container {
     gap: 40px;
     max-width: 1100px;
     margin: 0 auto;
-    flex-wrap: wrap; /* Để responsive trên mobile */
+    flex-wrap: wrap; /* để phù hợp với mobile */
 }
 
+/* Hình ảnh giới thiệu */
 .about-image img {
     width: 600px;
     max-width: 100%;
@@ -107,6 +127,7 @@ main.container {
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+/* Khối nội dung chữ */
 .about-text {
     flex: 1;
     min-width: 300px;
@@ -126,6 +147,7 @@ main.container {
         color: #555;
     }
 
+    /* Nút xem thêm trong phần About */
     .about-text .btn {
         padding: 10px 20px;
         background: #333;
@@ -134,13 +156,16 @@ main.container {
         text-decoration: none;
         font-size: 15px;
         transition: background 0.3s;
-        cursor: pointer;
     }
 
         .about-text .btn:hover {
-            background: #e63946; /* màu chủ đạo nổi bật */
+            background: #e63946; /* màu đỏ nổi bật */
         }
 
+
+/* ===========================================================
+   THIẾT KẾ HEADER PHỤ VỚI MENU
+   =========================================================== */
 header {
     display: flex;
     align-items: center;
@@ -150,6 +175,7 @@ header {
     background-color: white;
 }
 
+/* Logo thương hiệu */
 .logo {
     font-weight: 700;
     font-size: 1.5rem;
@@ -158,6 +184,7 @@ header {
     cursor: pointer;
 }
 
+/* Menu điều hướng */
 nav ul {
     list-style: none;
     display: flex;
@@ -167,7 +194,6 @@ nav ul {
 }
 
     nav ul li a {
-        text-decoration: none;
         color: #222;
         font-weight: 500;
         font-size: 1rem;
@@ -175,11 +201,12 @@ nav ul {
     }
 
         nav ul li a:hover {
-            color: #1a73e8; /* Màu xanh chủ đạo */
+            color: #1a73e8;
             border-bottom: 2px solid #1a73e8;
             padding-bottom: 2px;
         }
 
+/* Nút đặt hàng */
 button.order-btn {
     background-color: #1a73e8;
     color: white;
@@ -187,9 +214,7 @@ button.order-btn {
     padding: 8px 18px;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s;
 }
 
     button.order-btn:hover {
@@ -197,7 +222,9 @@ button.order-btn {
     }
 
 
-/* --- Sản phẩm nổi bật --- */
+/* ===========================================================
+   SẢN PHẨM NỔI BẬT
+   =========================================================== */
 .featured-products {
     text-align: center;
     margin: 50px 0;
@@ -208,13 +235,15 @@ button.order-btn {
         margin-bottom: 30px;
     }
 
+/* Lưới sản phẩm nổi bật */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 sản phẩm / 1 hàng */
+    grid-template-columns: repeat(2, 1fr);
     gap: 25px;
     justify-content: center;
 }
 
+/* Card sản phẩm */
 .product-card {
     background: #fff;
     border-radius: 12px;
@@ -228,15 +257,15 @@ button.order-btn {
         transform: translateY(-5px);
     }
 
+    /* Ảnh sản phẩm */
     .product-card img {
         width: 100%;
-        height: auto; /* giữ đúng tỉ lệ ảnh */
+        height: auto;
         border-radius: 8px;
-        object-fit: contain; /* không crop ảnh */
+        object-fit: contain;
     }
 
-
-
+/* Giá sản phẩm */
 .product-price {
     font-size: 18px;
     color: #e63946;
@@ -244,14 +273,12 @@ button.order-btn {
     margin: 10px 0;
 }
 
+/* Nút chung */
 .btn {
     background-color: #333;
     color: #fff;
-    border: none;
     padding: 10px 18px;
     border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
     .btn:hover {
@@ -259,14 +286,9 @@ button.order-btn {
     }
 
 
-
-/* Main content */
-main.container {
-    padding: 40px 0;
-}
-
-/* Footer */
-
+/* ===========================================================
+   FOOTER – THÔNG TIN CUỐI TRANG
+   =========================================================== */
 .site-footer {
     background: #f9f9f9;
     border-top: 1px solid #ddd;
@@ -274,24 +296,23 @@ main.container {
     color: #333;
 }
 
+/* Các khối trong footer */
 .footer-container > * {
     margin-bottom: 30px;
 }
 
-/* Newsletter subscription */
-
+/* Newsletter – đăng ký nhận thông báo */
 .footer-newsletter h2 {
     font-size: 1.75rem;
     font-weight: 700;
-    margin-bottom: 10px;
 }
 
 .footer-newsletter p {
-    margin-bottom: 20px;
     font-size: 1rem;
     color: #444;
 }
 
+/* Form email newsletter */
 .newsletter-form {
     display: flex;
     max-width: 450px;
@@ -302,8 +323,6 @@ main.container {
         padding: 10px 15px;
         border-radius: 8px 0 0 8px;
         border: 1px solid #ccc;
-        font-size: 1rem;
-        outline: none;
     }
 
         .newsletter-form input[type="email"]:focus {
@@ -312,21 +331,17 @@ main.container {
 
     .newsletter-form button {
         border-radius: 0 8px 8px 0;
-        border: none;
         background-color: #111827;
         color: white;
         font-weight: 700;
         cursor: pointer;
-        padding: 0 20px;
-        transition: background-color 0.3s ease;
     }
 
         .newsletter-form button:hover {
             background-color: #000;
         }
 
-/* Footer links */
-
+/* Liên kết footer */
 .footer-links {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -335,18 +350,7 @@ main.container {
 
     .footer-links h3 {
         font-weight: 700;
-        font-size: 1.1rem;
-        margin-bottom: 10px;
     }
-
-    .footer-links ul {
-        padding-left: 0;
-        list-style: none;
-    }
-
-        .footer-links ul li {
-            margin-bottom: 6px;
-        }
 
 .footer-copy {
     text-align: center;
@@ -354,26 +358,27 @@ main.container {
     color: #666;
 }
 
+/* Đường kẻ phân cách footer */
 hr {
-    border: none;
     border-top: 1px solid #ddd;
-    margin: 20px 0;
 }
 
 
-/* Header stickers (overlay) */
+/* ===========================================================
+   STICKER (ICON) – GIỎ + SEARCH NỔI TRÊN HEADER
+   =========================================================== */
 .header-stickers {
     position: absolute;
-    top: 8px; /* khoảng cách từ top của header */
-    right: 18px; /* cách phải của header */
+    top: 8px;
+    right: 18px;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* khoảng cách giữa 2 sticker */
-    z-index: 9999; /* luôn nổi trên cùng */
-    pointer-events: none; /* mặc định không chặn sự kiện, enable cho children */
+    gap: 10px;
+    z-index: 9999;
+    pointer-events: none; /* chỉ sticker con có thể click */
 }
 
-    /* mỗi sticker cho phép tương tác */
+    /* Mỗi sticker */
     .header-stickers .sticker {
         pointer-events: auto;
         display: inline-flex;
@@ -382,54 +387,45 @@ hr {
         width: 46px;
         height: 46px;
         border-radius: 50%;
-        text-decoration: none;
-        color: inherit;
-        font-size: 18px;
-        line-height: 1;
         box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+        font-size: 18px;
         transition: transform .12s ease, box-shadow .12s ease;
-        transform-origin: center;
     }
 
-    /* trong suốt (giỏ hàng) */
+    /* Sticker giỏ hàng */
     .header-stickers .sticker-cart {
-        background: rgba(255,255,255,0.85); /* hơi trong suốt */
+        background: rgba(255,255,255,0.85);
         border: 1px solid rgba(0,0,0,0.12);
         color: #222;
     }
 
-    /* vòng tròn đen (search) */
+    /* Sticker search */
     .header-stickers .sticker-search {
         background: #1f1f1f;
         color: #fff;
-        border: 2px solid rgba(255,255,255,0.03); /* subtle */
+        border: 2px solid rgba(255,255,255,0.03);
     }
 
-    /* badge số lượng */
+    /* Badge số lượng */
     .header-stickers .sticker-badge {
         position: absolute;
         top: -6px;
         right: -6px;
         min-width: 18px;
         height: 18px;
-        padding: 0 4px;
         font-size: 12px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
         background: #e53935;
         color: white;
         border-radius: 999px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* hover effect */
+    /* Hover sticker */
     .header-stickers .sticker:hover {
         transform: translateY(-4px) scale(1.03);
         box-shadow: 0 10px 22px rgba(0,0,0,0.18);
     }
 
-/* responsive: giảm kích thước trên màn nhỏ */
+/* Responsive sticker size */
 @media (max-width: 768px) {
     .header-stickers {
         top: 6px;

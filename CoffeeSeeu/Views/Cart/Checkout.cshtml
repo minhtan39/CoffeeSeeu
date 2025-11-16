@@ -1,22 +1,72 @@
 ﻿@model CoffeeSeeu.Models.Order
 
+@{
+    // ViewBag.IsAuthenticated, ViewBag.IsProfileComplete, ViewBag.UserProfile
+    // được set trong controller trước khi trả về View
+    var isAuth = ViewBag.IsAuthenticated as bool? ?? false;
+    var isComplete = ViewBag.IsProfileComplete as bool? ?? false;
+    var profile = ViewBag.UserProfile as CoffeeSeeu.Models.User;
+}
+
+<!-- ============================================================================
+     VIEW: Checkout (Form thông tin thanh toán)
+     Mục đích:
+       - Nếu user đã đăng nhập nhưng profile chưa hoàn thiện -> bắt buộc cập nhật
+       - Ngược lại hiển thị form cho cả Guest và User (đã hoàn thiện profile)
+     Ghi chú:
+       - Không thay đổi logic; chỉ thêm chú thích để dễ đọc báo cáo.
+============================================================================ -->
+
 <h2>Thông tin thanh toán</h2>
 
-<form asp-action="Checkout" method="post">
-    <div class="form-group">
-        <label for="CustomerName">Họ tên</label>
-        <input asp-for="CustomerName" class="form-control" />
+<!-- Nếu user đã đăng nhập nhưng chưa đầy đủ thông tin cá nhân -->
+@if (isAuth && !isComplete)
+{
+    <div class="alert alert-warning">
+        <strong>Chú ý:</strong> Bạn chưa cập nhật đầy đủ thông tin cá nhân (họ tên, số điện thoại).
+        Vui lòng <a asp-controller="Account" asp-action="EditProfile">cập nhật thông tin</a> trước khi đặt hàng.
     </div>
 
-    <div class="form-group">
-        <label for="Address">Địa chỉ</label>
-        <input asp-for="Address" class="form-control" />
-    </div>
+    <p>
+        <!-- Nút dẫn đến trang chỉnh sửa profile và quay lại giỏ hàng -->
+        <a asp-controller="Account" asp-action="EditProfile" class="btn btn-primary">Cập nhật thông tin</a>
+        <a asp-controller="Cart" asp-action="Index" class="btn btn-secondary">Quay lại giỏ hàng</a>
+    </p>
+}
+else
+{
+    <!-- Hiển thị form cho guest hoặc user đã đủ thông tin -->
+    <form asp-action="Checkout" method="post">
+        <!-- Họ tên: nếu user đã đăng nhập và có profile thì tiền điền -->
+        <div class="form-group mb-3">
+            <label for="CustomerName">Họ tên</label>
+            <input asp-for="CustomerName"
+                   class="form-control"
+                   value="@(profile != null ? profile.FullName : Model.CustomerName)" />
+            <span asp-validation-for="CustomerName" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label for="Phone">Số điện thoại</label>
-        <input asp-for="Phone" class="form-control" />
-    </div>
+        <!-- Địa chỉ -->
+        <div class="form-group mb-3">
+            <label for="Address">Địa chỉ</label>
+            <input asp-for="Address" class="form-control" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Xác nhận đặt hàng</button>
-</form>
+        <!-- Số điện thoại: nếu user đã đăng nhập tiền điền từ profile -->
+        <div class="form-group mb-3">
+            <label for="Phone">Số điện thoại</label>
+            <input asp-for="Phone"
+                   class="form-control"
+                   value="@(profile != null ? profile.Phone : Model.Phone)" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        <!-- Nút xác nhận đặt hàng -->
+        <button type="submit" class="btn btn-primary">Xác nhận đặt hàng</button>
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

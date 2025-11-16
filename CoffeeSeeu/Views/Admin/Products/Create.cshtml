@@ -1,0 +1,64 @@
+﻿@model CoffeeSeeu.Models.Product
+@{
+    ViewData["Title"] = "Thêm sản phẩm";
+}
+
+<!-- ============================================================================
+     VIEW: Thêm sản phẩm mới (Admin)
+     - Form gửi dữ liệu → Admin/CreateProduct (POST)
+     - Bao gồm: Tên, mô tả, giá, rating, upload ảnh
+============================================================================ -->
+
+<h2 class="mb-4">Thêm sản phẩm</h2>
+
+<!-- Form thêm mới -->
+<form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+
+    <!-- Nhập tên sản phẩm -->
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <!-- Mô tả sản phẩm -->
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+    </div>
+
+    <!-- Giá bán -->
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <!-- Rating sản phẩm -->
+    <div class="mb-3">
+        <label asp-for="Rating" class="form-label">Rating (0 - 5)</label>
+        <input asp-for="Rating"
+               class="form-control"
+               type="number"
+               min="0"
+               max="5" />
+    </div>
+
+    <!-- Upload ảnh -->
+    <div class="mb-3">
+        <label class="form-label">Ảnh sản phẩm</label>
+        <input type="file"
+               name="ImageFile"
+               accept="image/*"
+               class="form-control" />
+    </div>
+
+    <!-- Nút lưu + hủy -->
+    <button class="btn btn-success" type="submit">Lưu</button>
+    <a asp-action="Products" class="btn btn-secondary ms-2">Hủy</a>
+</form>
+
+<!-- Scripts validation (bắt lỗi client-side) -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

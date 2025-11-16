@@ -4,17 +4,31 @@
     ViewData["Title"] = "Giỏ hàng";
 }
 
+<!-- ============================================================================
+     FILE: Views/Cart/Index.cshtml
+     MỤC ĐÍCH:
+       - Hiển thị danh sách sản phẩm người dùng đã thêm vào giỏ (session-based)
+       - Cho phép chỉnh số lượng, xóa item, và chuyển sang trang Thanh toán
+       - Xử lý tương tác bằng AJAX (fetch) gọi các endpoint trong CartController
+     GHI CHÚ:
+       - Không thay đổi logic, chỉ thêm chú thích để dễ bảo trì và làm báo cáo
+============================================================================ -->
+
 <link href="~/css/product.css" rel="stylesheet" />
 
 <div class="container mt-4">
     <h2 class="mb-4">🛒 Giỏ hàng của bạn</h2>
 
+    @* Nếu model rỗng hoặc null -> hiển thị thông báo và link tới trang sản phẩm *@
     @if (Model == null || !Model.Any())
     {
-        <div class="alert alert-info">Giỏ hàng đang trống. <a asp-controller="Product" asp-action="Index">Mua ngay</a></div>
+        <div class="alert alert-info">
+            Giỏ hàng đang trống. <a asp-controller="Product" asp-action="Index">Mua ngay</a>
+        </div>
     }
     else
     {
+        <!-- Bảng giỏ hàng -->
         <div class="table-responsive">
             <table class="table align-middle">
                 <thead>
@@ -27,24 +41,51 @@
                         <th></th>
                     </tr>
                 </thead>
+
                 <tbody id="cartTbody">
+                    @* Lặp qua các CartItem trong model *@
                     @foreach (var it in Model)
                     {
                         <tr id="row-@it.ProductId" data-product-id="@it.ProductId">
                             <td style="width:100px;">
-                                <img src="@it.ImageUrl" alt="@it.Name" style="width:80px;height:60px;object-fit:cover;border-radius:6px;" />
+                                <img src="@it.ImageUrl"
+                                     alt="@it.Name"
+                                     style="width:80px;height:60px;object-fit:cover;border-radius:6px;" />
                             </td>
+
                             <td>@it.Name</td>
+
+                            @* Hiển thị giá theo định dạng số (N0) + ký hiệu tiền tệ *@
                             <td class="item-price">@it.Price.ToString("N0") ₫</td>
+
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <button class="btn btn-sm btn-outline-secondary btn-qty-decrease" data-product-id="@it.ProductId">−</button>
-                                    <input type="text" class="form-control form-control-sm text-center qty-input" style="width:60px;" value="@it.Quantity" data-product-id="@it.ProductId" />
-                                    <button class="btn btn-sm btn-outline-secondary btn-qty-increase" data-product-id="@it.ProductId">+</button>
+                                    @* Nút giảm số lượng *@
+                                    <button class="btn btn-sm btn-outline-secondary btn-qty-decrease"
+                                            data-product-id="@it.ProductId">
+                                        −
+                                    </button>
+
+                                    @* Input cho phép nhập số lượng trực tiếp *@
+                                    <input type="text"
+                                           class="form-control form-control-sm text-center qty-input"
+                                           style="width:60px;"
+                                           value="@it.Quantity"
+                                           data-product-id="@it.ProductId" />
+
+                                    @* Nút tăng số lượng *@
+                                    <button class="btn btn-sm btn-outline-secondary btn-qty-increase"
+                                            data-product-id="@it.ProductId">
+                                        +
+                                    </button>
                                 </div>
                             </td>
+
+                            @* Thành tiền cho dòng (Price * Quantity) *@
                             <td class="item-subtotal">@((it.Price * it.Quantity).ToString("N0")) ₫</td>
+
                             <td>
+                                @* Nút xóa item khỏi giỏ *@
                                 <button class="btn btn-sm btn-danger btn-remove" data-product-id="@it.ProductId">Xóa</button>
                             </td>
                         </tr>
@@ -53,6 +94,7 @@
             </table>
         </div>
 
+        @* Tổng tiền và nút Thanh toán *@
         <div class="mt-3 d-flex justify-content-end align-items-center gap-4">
             @{
                 var total = Model.Sum(i => i.Price * i.Quantity);
@@ -60,6 +102,7 @@
             <div>
                 <strong>Tổng:</strong> <span id="cartTotal">@total.ToString("N0")</span> ₫
             </div>
+
             <a class="btn btn-primary" asp-controller="Cart" asp-action="Checkout">Thanh toán</a>
         </div>
     }
@@ -67,50 +110,62 @@
 
 @section Scripts {
     <script>
-        (function(){
-            function qsa(sel, el=document){ return Array.from(el.querySelectorAll(sel)); }
-            function qs(sel, el=document){ return el.querySelector(sel); }
+        (function () {
+            // Helper DOM
+            function qsa(sel, el = document) { return Array.from(el.querySelectorAll(sel)); }
+            function qs(sel, el = document) { return el.querySelector(sel); }
 
-            function formatNumber(n){ return new Intl.NumberFormat().format(n); }
+            // Format số theo locale (ngăn cách hàng nghìn)
+            function formatNumber(n) { return new Intl.NumberFormat().format(n); }
 
-            async function postJson(url, data){
+            // POST JSON helper
+            async function postJson(url, data) {
                 return fetch(url, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
             }
 
-            async function updateBadge(count){
+            // Cập nhật badge số lượng trên header (element có id=cartBadge trong _Layout)
+            async function updateBadge(count) {
                 const el = document.getElementById('cartBadge');
                 if (el) el.textContent = count;
             }
 
-            function updateRowSubtotal(row, price, qty){
+            // Cập nhật subtotal cho 1 dòng
+            function updateRowSubtotal(row, price, qty) {
                 const sub = row.querySelector('.item-subtotal');
                 if (sub) sub.textContent = formatNumber(price * qty) + ' ₫';
             }
 
-            function updateCartTotal(){
+            // Tính lại tổng toàn bộ giỏ (dựa vào các .item-subtotal trong DOM)
+            function updateCartTotal() {
                 let total = 0;
                 qsa('#cartTbody .item-subtotal').forEach(td => {
-                    const digits = td.textContent.replace(/\D/g,'');
-                    if (digits) total += parseInt(digits,10);
+                    const digits = td.textContent.replace(/\D/g, '');
+                    if (digits) total += parseInt(digits, 10);
                 });
                 const el = document.getElementById('cartTotal');
                 if (el) el.textContent = formatNumber(total);
             }
 
-            // Increase
+            // =====================================================
+            // Xử lý sự kiện: Tăng số lượng
+            // Gọi POST /Cart/UpdateQuantityAjax { productId, quantity }
+            // Trả về JSON { success, cartCount, itemQuantity }
+            // =====================================================
             document.addEventListener('click', async (ev) => {
                 const btn = ev.target.closest('.btn-qty-increase');
                 if (!btn) return;
                 ev.preventDefault();
-                const productId = parseInt(btn.dataset.productId,10);
+
+                const productId = parseInt(btn.dataset.productId, 10);
                 const row = document.getElementById('row-' + productId);
                 const input = row.querySelector('.qty-input');
-                let qty = parseInt(input.value,10) || 0;
+                let qty = parseInt(input.value, 10) || 0;
                 qty++;
+
                 try {
                     const res = await postJson('/Cart/UpdateQuantityAjax', { productId, quantity: qty });
                     if (!res.ok) { alert('Không thể cập nhật'); return; }
@@ -118,7 +173,7 @@
                     if (j.success) {
                         input.value = j.itemQuantity;
                         const priceText = row.querySelector('.item-price').textContent || '';
-                        const priceRaw = parseInt(priceText.replace(/\D/g,''),10) || 0;
+                        const priceRaw = parseInt(priceText.replace(/\D/g, ''), 10) || 0;
                         updateRowSubtotal(row, priceRaw, j.itemQuantity);
                         updateCartTotal();
                         updateBadge(j.cartCount);
@@ -126,18 +181,23 @@
                 } catch (err) { console.error(err); alert('Lỗi'); }
             });
 
-            // Decrease
+            // =====================================================
+            // Xử lý sự kiện: Giảm số lượng
+            // Nếu qty <= 0 -> gọi RemoveAjax để xóa
+            // =====================================================
             document.addEventListener('click', async (ev) => {
                 const btn = ev.target.closest('.btn-qty-decrease');
                 if (!btn) return;
                 ev.preventDefault();
-                const productId = parseInt(btn.dataset.productId,10);
+
+                const productId = parseInt(btn.dataset.productId, 10);
                 const row = document.getElementById('row-' + productId);
                 const input = row.querySelector('.qty-input');
-                let qty = parseInt(input.value,10) || 0;
+                let qty = parseInt(input.value, 10) || 0;
                 qty--;
+
                 if (qty <= 0) {
-                    // remove
+                    // Xóa item nếu số lượng giảm xuống 0
                     try {
                         const res = await postJson('/Cart/RemoveAjax', { productId });
                         if (!res.ok) { alert('Không thể xóa'); return; }
@@ -152,7 +212,7 @@
                     return;
                 }
 
-                // set quantity
+                // Cập nhật quantity mới
                 try {
                     const res = await postJson('/Cart/UpdateQuantityAjax', { productId, quantity: qty });
                     if (!res.ok) { alert('Không thể cập nhật'); return; }
@@ -160,7 +220,7 @@
                     if (j.success) {
                         input.value = j.itemQuantity;
                         const priceText = row.querySelector('.item-price').textContent || '';
-                        const priceRaw = parseInt(priceText.replace(/\D/g,''),10) || 0;
+                        const priceRaw = parseInt(priceText.replace(/\D/g, ''), 10) || 0;
                         updateRowSubtotal(row, priceRaw, j.itemQuantity);
                         updateCartTotal();
                         updateBadge(j.cartCount);
@@ -168,12 +228,16 @@
                 } catch (err) { console.error(err); alert('Lỗi'); }
             });
 
-            // Manual input change
+            // =====================================================
+            // Xử lý sự kiện: Thay đổi nhập tay (change event trên input)
+            // - Nếu nhập 0 hoặc NaN -> xóa
+            // - Ngược lại -> gọi UpdateQuantityAjax
+            // =====================================================
             document.addEventListener('change', async (ev) => {
                 const input = ev.target.closest('.qty-input');
                 if (!input) return;
-                const productId = parseInt(input.dataset.productId,10);
-                let qty = parseInt(input.value,10);
+                const productId = parseInt(input.dataset.productId, 10);
+                let qty = parseInt(input.value, 10);
                 if (isNaN(qty) || qty < 0) qty = 0;
 
                 if (qty === 0) {
@@ -199,7 +263,7 @@
                     if (j.success) {
                         const row = document.getElementById('row-' + productId);
                         const priceText = row.querySelector('.item-price').textContent || '';
-                        const priceRaw = parseInt(priceText.replace(/\D/g,''),10) || 0;
+                        const priceRaw = parseInt(priceText.replace(/\D/g, ''), 10) || 0;
                         updateRowSubtotal(row, priceRaw, j.itemQuantity);
                         updateCartTotal();
                         updateBadge(j.cartCount);
@@ -207,13 +271,18 @@
                 } catch (err) { console.error(err); }
             });
 
-            // Remove button
+            // =====================================================
+            // Xử lý xóa item (nút Xóa)
+            // Gọi /Cart/RemoveAjax
+            // =====================================================
             document.addEventListener('click', async (ev) => {
                 const btn = ev.target.closest('.btn-remove');
                 if (!btn) return;
                 ev.preventDefault();
-                const productId = parseInt(btn.dataset.productId,10);
+
+                const productId = parseInt(btn.dataset.productId, 10);
                 if (!confirm('Bạn có muốn xóa sản phẩm này?')) return;
+
                 try {
                     const res = await postJson('/Cart/RemoveAjax', { productId });
                     if (!res.ok) { alert('Không thể xóa'); return; }

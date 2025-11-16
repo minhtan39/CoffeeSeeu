@@ -1,17 +1,25 @@
-﻿/* === Layout chung === */
+﻿/* ===================================================================
+
+ * Mục đích   : Kiểu dáng chung cho layout, header, thanh tìm kiếm,
+ *              giỏ hàng, lưới sản phẩm và các thành phần liên quan.
+ * =================================================================== */
+
+/* === Layout chung: giới hạn chiều ngang và căn giữa nội dung === */
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* === Header: chỉ có giỏ hàng (keepsafe) === */
+/* === Header: chỉ chứa vùng giỏ hàng (keep safe) ===
+   - header đặt sang phải, dùng cho nút giỏ hàng / nút đăng nhập */
 .header {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 20px;
 }
 
+/* Nút giỏ hàng (kiểu đơn giản, có border) */
 .cart-btn {
     font-size: 22px;
     color: #333;
@@ -22,86 +30,117 @@
     transition: all 0.2s ease;
 }
 
+    /* hover effect cho nút giỏ hàng */
     .cart-btn:hover {
         background-color: #333;
         color: #fff;
     }
 
 /* =======================================
-   SEARCH BAR (ICON OUTSIDE)
+   SEARCH BAR (ikon đặt sát mép phải input)
+   Giải pháp: không dùng offset âm (right:-50px) để tránh bị đẩy ra ngoài
+   và đảm bảo căn giữa trên mọi kích thước.
 ======================================= */
 
+/* Wrapper để căn vị trí cho button/ikon */
 .search-wrapper {
     position: relative;
+    display: block; /* đảm bảo width theo container */
+    width: 100%;
 }
 
-/* 1) Nới khoảng cách cho kính lúp (nằm ngoài input)
-   tăng right (đi ra ngoài hơn) và giảm shadow để nhẹ nhàng hơn */
+/* Input tìm kiếm:
+   - chiều cao hợp lý, bo tròn, có padding-right để không che text bởi button */
 .search-input {
     height: 48px;
     border-radius: 999px;
     border: 1px solid #e9e9e9;
     padding-left: 20px;
-    padding-right: 32px; /* tăng chút để text không chạm */
+    padding-right: 64px; /* đủ khoảng cho nút nằm sát mép phải */
     font-size: 15px;
     box-sizing: border-box;
+    width: 100%;
 }
 
+/* Nút kính lúp đặt sát mép phải input:
+   - dùng right: 10px (bên trong vùng form) thay vì offset âm
+   - set border:none để trông giống icon button, nhưng vẫn a11y */
 .search-btn-outside {
     position: absolute;
     top: 50%;
-    right: -50px; 
+    right: 10px;
     transform: translateY(-50%);
     width: 44px;
     height: 44px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     background: #ffffff;
     border: 1px solid rgba(0,0,0,0.06);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.06); /* nhẹ hơn */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
     cursor: pointer;
-    transition: 0.18s ease, transform 0.12s ease;
-    z-index: 5; /* đảm bảo nổi trên input */
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    z-index: 20;
+    padding: 0;
 }
 
+    /* Hover effect */
     .search-btn-outside:hover {
-        transform: translateY(-50%) translateY(-2px) scale(1.04);
-        box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+        transform: translateY(-50%) scale(1.03);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.12);
     }
 
-
+    /* Icon bên trong nút */
     .search-btn-outside i {
         font-size: 17px;
         color: #333;
     }
 
-/* responsive: icon nhỏ lại  */
+/* Nếu muốn button trông phẳng hơn (tuỳ bạn), uncomment:
+.search-btn-outside { background: transparent; border: none; }
+*/
+
+/* Responsive: trên mobile giảm kích thước */
 @media (max-width: 576px) {
     .search-btn-outside {
-        right: -10px;
+        right: 8px;
         width: 38px;
         height: 38px;
     }
 
     .search-input {
         height: 44px;
+        padding-right: 56px;
     }
 }
 
+/* Suggestion box: căn đúng phía dưới input */
+.suggest-box {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 2000;
+    display: none;
+}
+
+
 /* =======================================
-   HEADER STICKER (giỏ hàng) — refined
-======================================= */
-/* 2) Lùi giỏ hàng vào trong để không chạm nút Đăng ký */
+   HEADER STICKER (biểu tượng/ nút giỏ hàng)
+   - Đặt lùi vào trong để không chạm các nút khác
+   ======================================= */
+
+/* Vùng chứa sticker (giỏ hàng) — căn theo phải */
 .header-stickers {
     position: absolute;
     top: 50%;
-    right: -36px; /* <-- tăng khoảng cách từ mép phải (trước là 22px) */
+    right: -36px; /* lùi ra ngoài để tránh chạm nút Đăng ký */
     transform: translateY(-50%);
     z-index: 1200;
 }
 
+/* Kiểu chính cho nút giỏ hàng tròn */
 .sticker-cart {
     display: inline-flex;
     align-items: center;
@@ -117,16 +156,18 @@
     transition: 0.18s ease, transform 0.12s ease;
 }
 
-
+    /* Kích thước icon trong sticker */
     .sticker-cart i {
         font-size: 18px;
     }
 
+    /* Hover effect nhẹ cho sticker */
     .sticker-cart:hover {
         transform: scale(1.03);
         box-shadow: 0 10px 22px rgba(0,0,0,0.12);
     }
 
+/* Badge số lượng trên góc (sử dụng cho số lượng sản phẩm trong giỏ) */
 .sticker-badge {
     position: absolute;
     top: -6px;
@@ -146,7 +187,8 @@
 
 /* =======================================
    GRID SẢN PHẨM
-======================================= */
+   - Dùng grid responsive, mỗi item tối thiểu 280px
+   ======================================= */
 
 .product-grid {
     display: grid;
@@ -154,7 +196,8 @@
     gap: 20px;
 }
 
-/* CARD SP */
+/* CARD SẢN PHẨM
+   - Card có shadow nhẹ, bo góc, hover nâng lên */
 .product-card {
     border-radius: 10px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -164,11 +207,13 @@
     flex-direction: column;
 }
 
+    /* Hover: nâng card và tăng shadow */
     .product-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
 
+/* Ảnh sản phẩm: cố định chiều cao, cover để giữ tỉ lệ */
 .product-img {
     height: 250px;
     object-fit: cover;
@@ -177,7 +222,7 @@
     width: 100%;
 }
 
-/* Nội dung trong card */
+/* Nội dung trong card: padding và bố cục cột */
 .product-info {
     padding: 15px;
     display: flex;
@@ -185,32 +230,36 @@
     flex: 1;
 }
 
+    /* Tiêu đề sản phẩm */
     .product-info h3 {
         font-size: 18px;
         font-weight: bold;
         margin-bottom: 8px;
     }
 
+    /* Mô tả ngắn */
     .product-info p {
         font-size: 14px;
         color: #555;
         margin-bottom: 10px;
     }
 
+/* Giá: màu đỏ để nổi bật */
 .price {
     color: #e74c3c;
     font-weight: bold;
     margin-bottom: 12px;
 }
 
-/* Rating */
+/* Rating: màu vàng cho sao */
 .rating span {
     color: #ffc107;
     font-size: 18px;
     margin-right: 2px;
 }
 
-/* Nút thêm giỏ */
+/* Nút thêm vào giỏ:
+   - luôn nằm dưới (margin-top: auto) để đẩy xuống đáy card */
 .add-cart-btn {
     margin-top: auto;
     background: #333;
@@ -222,17 +271,20 @@
     transition: 0.2s;
 }
 
+    /* Hover cho nút thêm giỏ */
     .add-cart-btn:hover {
         background: #555;
     }
 
-/* Rating stars – moved here */
+/* Rating stars: style cho các ngôi sao có thể click */
 .rating .star {
     cursor: pointer;
     font-size: 20px;
     transition: color 0.2s ease-in-out;
 }
-/* === Autocomplete suggestion styles === */
+
+/* === Autocomplete suggestion styles ===
+   - Dùng cho gợi ý khi gõ tìm kiếm: box + list items */
 .suggest-box {
     background: #fff;
     border: 1px solid #e6e6e6;
@@ -241,15 +293,18 @@
     overflow: hidden;
 }
 
+    /* Mỗi item trong suggestion list */
     .suggest-box .list-group-item {
         border: none;
         padding: 10px 14px;
     }
 
+        /* Hover item: đổi nền nhẹ */
         .suggest-box .list-group-item:hover {
             background: #f8f9fa;
         }
 
+    /* Highlight (tên sản phẩm/ từ khóa) trong gợi ý */
     .suggest-box strong {
         color: #111;
     }

@@ -1,9 +1,22 @@
 ﻿@model CoffeeSeeu.Models.Order
 
-<h2>@ViewBag.Message</h2>
+<!-- ============================================================================
+     MỤC ĐÍCH:
+       - Hiển thị thông báo khi đơn hàng đã đặt thành công
+       - Hiển thị thông tin khách hàng đã nhập ở bước Checkout
+       - Cho phép quay lại trang sản phẩm để tiếp tục mua sắm
+============================================================================ -->
 
-<p><strong>Khách hàng:</strong> @Model.CustomerName</p>
-<p><strong>Địa chỉ:</strong> @Model.Address</p>
-<p><strong>Số điện thoại:</strong> @Model.Phone</p>
+<h2 class="mb-4">@ViewBag.Message</h2>
 
-<a class="btn btn-primary" asp-controller="Product" asp-action="Index">Tiếp tục mua hàng</a>
+<!-- Thông tin tóm tắt đơn hàng -->
+<div class="mb-3">
+    <p><strong>Khách hàng:</strong> @Model.CustomerName</p>
+    <p><strong>Địa chỉ giao hàng:</strong> @Model.Address</p>
+    <p><strong>Số điện thoại:</strong> @Model.Phone</p>
+</div>
+
+<!-- Nút quay về Product -->
+<a class="btn btn-primary" asp-controller="Product" asp-action="Index">
+    Tiếp tục mua hàng
+</a>

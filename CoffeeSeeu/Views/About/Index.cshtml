@@ -3,23 +3,38 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<!-- ============================================================================
+     PHẦN GIỚI THIỆU CHUNG (Hero section)
+     - Hiển thị tiêu đề, mô tả và hình ảnh đại diện của thương hiệu
+============================================================================ -->
 <section class="about-hero text-center py-5 bg-light">
     <div class="container">
         <h1 class="fw-bold mb-3" style="font-size: 2.5rem;">Về SeeU Coffee</h1>
         <p class="lead text-muted">
             SeeU Coffee – nơi mỗi tách cà phê là một câu chuyện, mỗi không gian là một trải nghiệm.
         </p>
-        <img src="~/img/logo.jpg" class="img-fluid rounded shadow mt-4"
-             style="max-height: 400px; object-fit: cover;" alt="SeeU Coffee Store">
+
+        <!-- Ảnh giới thiệu thương hiệu -->
+        <img src="~/img/logo.jpg"
+             class="img-fluid rounded shadow mt-4"
+             style="max-height: 400px; object-fit: cover;"
+             alt="SeeU Coffee Store" />
     </div>
 </section>
 
-<!-- Giới thiệu thương hiệu -->
+<!-- ============================================================================
+     PHẦN GIỚI THIỆU THƯƠNG HIỆU
+     - Nội dung về hành trình và nguồn gốc SeeU Coffee
+============================================================================ -->
 <section class="container my-5">
     <div class="row align-items-center">
+
+        <!-- Ảnh minh họa -->
         <div class="col-md-6 mb-4 mb-md-0">
             <img src="~/img/shop.jpg" alt="Cà phê SeeU" class="img-fluid rounded-4 shadow-sm" />
         </div>
+
+        <!-- Nội dung mô tả -->
         <div class="col-md-6">
             <h2 class="fw-semibold mb-3">Hành trình của SeeU Coffee</h2>
             <p>
@@ -32,14 +47,21 @@
                 sau đó được rang xay thủ công để giữ trọn vị đậm đà tự nhiên.
             </p>
         </div>
+
     </div>
 </section>
 
-<!-- Sứ mệnh & Tầm nhìn -->
+<!-- ============================================================================
+     SỨ MỆNH & TẦM NHÌN
+     - Trình bày mục tiêu và định hướng phát triển thương hiệu
+============================================================================ -->
 <section class="bg-light py-5">
     <div class="container text-center">
         <h2 class="fw-bold mb-4">Sứ mệnh & Tầm nhìn</h2>
+
         <div class="row g-4">
+
+            <!-- SỨ MỆNH -->
             <div class="col-md-6">
                 <div class="p-4 bg-white shadow-sm rounded-4 h-100">
                     <h4 class="fw-semibold mb-3">☕ Sứ mệnh</h4>
@@ -49,6 +71,8 @@
                     </p>
                 </div>
             </div>
+
+            <!-- TẦM NHÌN -->
             <div class="col-md-6">
                 <div class="p-4 bg-white shadow-sm rounded-4 h-100">
                     <h4 class="fw-semibold mb-3">🌿 Tầm nhìn</h4>
@@ -58,46 +82,72 @@
                     </p>
                 </div>
             </div>
+
         </div>
+
     </div>
 </section>
 
-<!-- Không gian quán (lấy động từ DB) -->
+<!-- ============================================================================
+     KHÔNG GIAN QUÁN (DỮ LIỆU LẤY ĐỘNG TỪ DATABASE)
+     - Dùng ViewBag.SpaceImages (danh sách ảnh thuộc Album "Không gian quán")
+============================================================================ -->
 <section class="container my-5 text-center">
     <h2 class="fw-bold mb-4">Không gian quán</h2>
-    <p class="text-muted mb-5">Một vài góc quen thuộc tại SeeU – nơi bạn có thể thư giãn và cảm nhận hương vị cuộc sống.</p>
+    <p class="text-muted mb-5">
+        Một vài góc quen thuộc tại SeeU – nơi bạn có thể thư giãn và cảm nhận hương vị cuộc sống.
+    </p>
 
     <div class="row g-4">
         @foreach (var img in ViewBag.SpaceImages ?? new List<dynamic>())
         {
             <div class="col-md-4">
-                <img src="@img.ImagePath" class="img-fluid rounded-4 shadow-sm" alt="@img.Description" />
+                <img src="@img.ImagePath"
+                     class="img-fluid rounded-4 shadow-sm"
+                     alt="@img.Description" />
             </div>
         }
     </div>
 </section>
 
-<!-- Đội ngũ nhân viên (lấy động từ DB) -->
+<!-- ============================================================================
+     ĐỘI NGŨ NHÂN VIÊN (DỮ LIỆU LẤY ĐỘNG TỪ DATABASE)
+     - Dùng ViewBag.StaffImages (Album "Đội ngũ")
+============================================================================ -->
 <section class="bg-light py-5">
     <div class="container text-center">
+
         <h2 class="fw-bold mb-4">Đội ngũ của chúng tôi</h2>
-        <p class="text-muted mb-5">Những người đứng sau mỗi ly cà phê thơm ngon.</p>
+        <p class="text-muted mb-5">
+            Những người đứng sau mỗi ly cà phê thơm ngon.
+        </p>
 
         <div class="row g-4 justify-content-center">
             @foreach (var staff in ViewBag.StaffImages ?? new List<dynamic>())
             {
                 <div class="col-md-3 col-6">
-                    <img src="@staff.ImagePath" class="img-fluid rounded-circle mb-3 shadow-sm" alt="@staff.Description" />
+
+                    <!-- Avatar nhân viên -->
+                    <img src="@staff.ImagePath"
+                         class="img-fluid rounded-circle mb-3 shadow-sm"
+                         alt="@staff.Description" />
+
+                    <!-- Tên nhân viên -->
                     <h5 class="fw-semibold">@staff.Description</h5>
+
+                    <!-- Chức vụ -->
                     <p class="text-muted small">@staff.Role</p>
                 </div>
             }
         </div>
+
     </div>
 </section>
 
-
-<!-- Kết thúc -->
+<!-- ============================================================================
+     LỜI KẾT
+     - Kêu gọi khách hàng khám phá menu
+============================================================================ -->
 <section class="text-center py-5">
     <h3 class="fw-semibold mb-3">Hãy ghé thăm SeeU Coffee ngay hôm nay ☕</h3>
     <a href="/Product" class="btn btn-primary px-4 py-2">Khám phá menu</a>

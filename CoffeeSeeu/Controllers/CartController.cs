@@ -11,31 +11,62 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeSeeu.Controllers
 {
+    /* =========================================================================
+     * Mục đích   : Xử lý giỏ hàng (Thêm, Cập nhật, Xóa, Checkout) và lưu vào Session
+     * ========================================================================= */
+
+    /// <summary>
+    /// Controller xử lý chức năng giỏ hàng:
+    /// - Index: hiển thị giỏ hàng
+    /// - Add/AddAjax: thêm sản phẩm (AJAX và non-AJAX)
+    /// - UpdateQuantityAjax / RemoveAjax: cập nhật/xóa item trong giỏ qua AJAX
+    /// - Checkout: tạo đơn hàng từ giỏ hàng
+    /// Dữ liệu giỏ hàng được lưu trong Session dưới key "CartItems" (JSON).
+    /// </summary>
     public class CartController : Controller
     {
+        // Khóa lưu giỏ hàng trong session
         private const string SessionKeyCart = "CartItems";
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Constructor: nhận ApplicationDbContext qua DI để truy vấn Products, Orders...
+        /// </summary>
         public CartController(ApplicationDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        // GET: /Cart
+        /// <summary>
+        /// Mục đích: Hiển thị trang giỏ hàng
+        /// Trả về: View với model List<CartItem> (lấy từ Session)
+        /// </summary>
+        [HttpGet]
         public IActionResult Index()
         {
+            // Lấy giỏ hàng từ session (nếu chưa có -> list rỗng)
             var cart = GetCartFromSession();
-            // convert to view model if needed; here pass List<CartItem>
             return View(cart);
         }
 
-        // GET /Cart/Add/{id}  (fallback non-AJAX)
+        /// <summary>
+        /// Mục đích: Thêm sản phẩm vào giỏ (non-AJAX fallback)
+        /// Tham số:
+        ///   - id: mã sản phẩm
+        /// Trả về:
+        ///   - Nếu là AJAX: JSON { success, cartCount }
+        ///   - Nếu non-AJAX: redirect về referer hoặc Product Index
+        /// </summary>
         public async Task<IActionResult> Add(int id)
         {
+            // Lấy sản phẩm từ DB (AsNoTracking vì không cần thay đổi)
             var product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
             if (product == null) return NotFound();
 
+            // Lấy giỏ hiện tại
             var cart = GetCartFromSession();
+
+            // Nếu item chưa có thì thêm mới, nếu có thì tăng quantity
             var item = cart.FirstOrDefault(ci => ci.ProductId == id);
             if (item == null)
             {
@@ -52,29 +83,41 @@ namespace CoffeeSeeu.Controllers
             {
                 item.Quantity++;
             }
+
+            // Lưu lại session
             SaveCartToSession(cart);
 
-            // If AJAX header present, return JSON for backward compatibility
-            if (Request.Headers.TryGetValue("X-Requested-With", out var header) &&
-                header.Any(h => string.Equals(h, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase)))
+            // Kiểm tra header AJAX: trả JSON nếu là AJAX
+            var xReqHeader = Request?.Headers?["X-Requested-With"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(xReqHeader) &&
+                string.Equals(xReqHeader, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase))
             {
                 return Json(new { success = true, cartCount = cart.Sum(c => c.Quantity) });
             }
 
-            var referer = Request.Headers["Referer"].ToString();
+            // Nếu không phải AJAX, chuyển về trang trước (referer) nếu có, ngược lại về Product index
+            var referer = Request?.GetTypedHeaders()?.Referer?.ToString();
             if (!string.IsNullOrEmpty(referer)) return Redirect(referer);
             return RedirectToAction("Index", "Product");
         }
 
-        // POST /Cart/AddAjax
+        /// <summary>
+        /// Mục đích: Thêm sản phẩm vào giỏ bằng AJAX (nhận JSON body)
+        /// Tham số:
+        ///   - req: { ProductId }
+        /// Trả về: JSON { success, cartCount }
+        /// </summary>
         [HttpPost]
-        public async Task<IActionResult> AddAjax([FromBody] AddAjaxRequest req)
+        public async Task<IActionResult> AddAjax([FromBody] AddAjaxRequest? req)
         {
+            // Validate request
             if (req == null || req.ProductId <= 0) return BadRequest(new { success = false });
 
+            // Lấy sản phẩm
             var product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == req.ProductId);
             if (product == null) return NotFound(new { success = false });
 
+            // Thêm/tăng số lượng
             var cart = GetCartFromSession();
             var item = cart.FirstOrDefault(ci => ci.ProductId == req.ProductId);
             if (item == null)
@@ -93,13 +136,19 @@ namespace CoffeeSeeu.Controllers
                 item.Quantity++;
             }
 
+            // Lưu session và trả JSON
             SaveCartToSession(cart);
             return Json(new { success = true, cartCount = cart.Sum(c => c.Quantity) });
         }
 
-        // POST /Cart/UpdateQuantityAjax
+        /// <summary>
+        /// Mục đích: Cập nhật số lượng cho 1 item (AJAX)
+        /// Tham số:
+        ///   - req: { ProductId, Quantity }
+        /// Trả về: JSON thông tin trạng thái và số lượng tổng
+        /// </summary>
         [HttpPost]
-        public IActionResult UpdateQuantityAjax([FromBody] UpdateQuantityRequest req)
+        public IActionResult UpdateQuantityAjax([FromBody] UpdateQuantityRequest? req)
         {
             if (req == null || req.ProductId <= 0) return BadRequest(new { success = false });
 
@@ -107,6 +156,7 @@ namespace CoffeeSeeu.Controllers
             var item = cart.FirstOrDefault(ci => ci.ProductId == req.ProductId);
             if (item == null) return NotFound(new { success = false });
 
+            // Nếu quantity <= 0 thì xoá item khỏi giỏ, ngược lại cập nhật
             if (req.Quantity <= 0)
             {
                 cart.Remove(item);
@@ -117,6 +167,7 @@ namespace CoffeeSeeu.Controllers
             }
 
             SaveCartToSession(cart);
+
             return Json(new
             {
                 success = true,
@@ -125,9 +176,14 @@ namespace CoffeeSeeu.Controllers
             });
         }
 
-        // POST /Cart/RemoveAjax
+        /// <summary>
+        /// Mục đích: Xóa 1 sản phẩm khỏi giỏ (AJAX)
+        /// Tham số:
+        ///   - req: { ProductId }
+        /// Trả về: JSON { success, cartCount }
+        /// </summary>
         [HttpPost]
-        public IActionResult RemoveAjax([FromBody] RemoveAjaxRequest req)
+        public IActionResult RemoveAjax([FromBody] RemoveAjaxRequest? req)
         {
             if (req == null || req.ProductId <= 0) return BadRequest(new { success = false });
 
@@ -142,7 +198,10 @@ namespace CoffeeSeeu.Controllers
             return Json(new { success = true, cartCount = cart.Sum(c => c.Quantity) });
         }
 
-        // GET /Cart/Count
+        /// <summary>
+        /// Mục đích: Lấy số lượng tổng trong giỏ (dùng cho badge)
+        /// Trả về: JSON { cartCount }
+        /// </summary>
         [HttpGet]
         public IActionResult Count()
         {
@@ -150,31 +209,91 @@ namespace CoffeeSeeu.Controllers
             return Json(new { cartCount = cart.Sum(c => c.Quantity) });
         }
 
-        // === Checkout (kept similar to yours, but uses session cart) ===
+        /// <summary>
+        /// Mục đích: Hiển thị form Checkout (GET)
+        /// - Nếu user đã đăng nhập và có thông tin, sẽ tiền điền một số trường
+        /// </summary>
         [HttpGet]
         public IActionResult Checkout()
         {
             var order = new Order();
+
+            // Nếu user đã đăng nhập thì tiền điền thông tin cơ bản từ user profile
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                var username = User.Identity?.Name;
+                if (!string.IsNullOrEmpty(username))
+                {
+                    var user = _context.Users.FirstOrDefault(u => u.Username == username);
+                    if (user != null)
+                    {
+                        order.Username = username;
+                        order.CustomerName = user.FullName;
+                        order.Phone = user.Phone;
+                        // Nếu lưu address trong User thì gán order.Address = user.Address;
+                    }
+                }
+            }
+
             return View(order);
         }
 
+        /// <summary>
+        /// Mục đích: Xử lý Checkout (POST) - lưu Order và OrderItems vào DB
+        /// Tham số:
+        ///   - order: model Order nhận từ form
+        /// Trả về:
+        ///   - Nếu thành công: view OrderSuccess
+        ///   - Nếu lỗi hoặc giỏ rỗng: trả về View(order) và hiển thị lỗi
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Checkout(Order order)
         {
-            if (!ModelState.IsValid) return View(order);
+            // Kiểm tra model hợp lệ
+            if (!ModelState.IsValid)
+            {
+                return View(order);
+            }
 
             var cart = GetCartFromSession();
             if (cart.Count == 0)
             {
-                ModelState.AddModelError("", "Giỏ hàng rỗng.");
+                ModelState.AddModelError(string.Empty, "Giỏ hàng rỗng.");
                 return View(order);
             }
 
-            order.Username = User.Identity?.Name;
+            // Nếu user đã đăng nhập, kiểm tra profile đã hoàn thiện (server-side)
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                var username = User.Identity?.Name;
+                if (!string.IsNullOrEmpty(username))
+                {
+                    var user = _context.Users.FirstOrDefault(u => u.Username == username);
+                    if (user != null)
+                    {
+                        // Yêu cầu tối thiểu: FullName và Phone phải có
+                        bool complete = !string.IsNullOrWhiteSpace(user.FullName) &&
+                                        !string.IsNullOrWhiteSpace(user.Phone);
+                        if (!complete)
+                        {
+                            TempData["Error"] = "Bạn cần cập nhật thông tin cá nhân trước khi đặt hàng.";
+                            return RedirectToAction("EditProfile", "Account");
+                        }
+
+                        // Ghi nhận giá trị server-side để tránh forgery
+                        order.Username = username;
+                        order.CustomerName = user.FullName;
+                        order.Phone = user.Phone;
+                    }
+                }
+            }
+
+            // Tính tổng và gán thời gian tạo
             order.TotalPrice = cart.Sum(ci => ci.Price * ci.Quantity);
             order.CreatedAt = DateTime.UtcNow;
 
+            // Lưu Order và OrderItems trong transaction để đảm bảo atomic
             using var tx = _context.Database.BeginTransaction();
             try
             {
@@ -187,7 +306,7 @@ namespace CoffeeSeeu.Controllers
                     {
                         OrderId = order.Id,
                         ProductId = ci.ProductId,
-                        ProductName = ci.Name ?? "",
+                        ProductName = ci.Name ?? string.Empty,
                         UnitPrice = ci.Price,
                         Quantity = ci.Quantity
                     };
@@ -197,7 +316,7 @@ namespace CoffeeSeeu.Controllers
                 _context.SaveChanges();
                 tx.Commit();
 
-                // clear cart in session
+                // Clear cart trong session sau khi đặt hàng thành công
                 SaveCartToSession(new List<CartItem>());
 
                 ViewBag.Message = "Đặt hàng thành công! Mã đơn: " + order.Id;
@@ -206,43 +325,76 @@ namespace CoffeeSeeu.Controllers
             catch
             {
                 tx.Rollback();
-                ModelState.AddModelError("", "Lỗi khi lưu đơn hàng, vui lòng thử lại.");
+                ModelState.AddModelError(string.Empty, "Lỗi khi lưu đơn hàng, vui lòng thử lại.");
                 return View(order);
             }
         }
 
-        // --- Helpers for session cart ---
+        /* =========================
+         * Helpers: Lưu / Lấy giỏ hàng từ Session
+         * Dữ liệu lưu dạng JSON (List<CartItem>)
+         * ========================= */
+
+        /// <summary>
+        /// Lấy danh sách CartItem từ Session
+        /// Trả về: List<CartItem> (không bao giờ trả null)
+        /// </summary>
         private List<CartItem> GetCartFromSession()
         {
             try
             {
-                var json = HttpContext.Session.GetString(SessionKeyCart);
+                var session = HttpContext?.Session;
+                if (session == null) return new List<CartItem>();
+
+                var json = session.GetString(SessionKeyCart);
                 if (string.IsNullOrEmpty(json)) return new List<CartItem>();
+
                 var list = JsonSerializer.Deserialize<List<CartItem>>(json);
                 return list ?? new List<CartItem>();
             }
             catch
             {
+                // Nếu lỗi (json hỏng, deserialize lỗi...), trả list rỗng để tránh crash
                 return new List<CartItem>();
             }
         }
 
+        /// <summary>
+        /// Lưu danh sách CartItem vào Session ở dạng JSON
+        /// </summary>
         private void SaveCartToSession(List<CartItem> cart)
         {
             try
             {
-                var json = JsonSerializer.Serialize(cart);
-                HttpContext.Session.SetString(SessionKeyCart, json);
+                var session = HttpContext?.Session;
+                if (session == null) return;
+
+                var json = JsonSerializer.Serialize(cart ?? new List<CartItem>());
+                session.SetString(SessionKeyCart, json);
             }
             catch
             {
-                // ignore serialization errors for now
+                // Bắt và bỏ qua lỗi serialize/IO để không làm gián đoạn flow
             }
         }
     }
 
-    // DTOs
+    // =========================
+    // DTOs cho các request AJAX
+    // =========================
+
+    /// <summary>
+    /// DTO cho AddAjax: chỉ cần ProductId
+    /// </summary>
     public class AddAjaxRequest { public int ProductId { get; set; } }
+
+    /// <summary>
+    /// DTO cho UpdateQuantityAjax
+    /// </summary>
     public class UpdateQuantityRequest { public int ProductId { get; set; } public int Quantity { get; set; } }
+
+    /// <summary>
+    /// DTO cho RemoveAjax
+    /// </summary>
     public class RemoveAjaxRequest { public int ProductId { get; set; } }
 }

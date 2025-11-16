@@ -4,12 +4,22 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Giới thiệu thương hiệu -->
+<!-- ============================================================================
+     TRANG CHỦ (HOME PAGE)
+     - Hiển thị giới thiệu thương hiệu SeeU Coffee
+     - Banner hero chính
+     - Danh sách “Sản phẩm nổi bật” (lấy 4 sản phẩm được controller chọn ra)
+============================================================================ -->
+<!-- ===================== GIỚI THIỆU THƯƠNG HIỆU ===================== -->
 <section class="about">
     <div class="about-container">
+
+        <!-- Hình ảnh giới thiệu -->
         <div class="about-image">
             <img src="~/img/decore2.jpg" alt="Về SeeU Coffee" />
         </div>
+
+        <!-- Nội dung giới thiệu -->
         <div class="about-text">
             <h2>Về SeeU Coffee</h2>
             <p>
@@ -17,61 +27,85 @@
                 Chúng tôi tự hào về quy trình rang xay thủ công và lựa chọn những hạt cà phê chất lượng cao từ các vùng nguyên liệu nổi tiếng.
             </p>
             <p>
-                Mỗi ly cà phê tại SeeU không chỉ là thức uống mà còn là một tác phẩm nghệ thuật, thể hiện sự tận tâm và kỹ năng của những người thợ lành nghề.
+                Mỗi ly cà phê tại SeeU không chỉ là thức uống mà còn là một tác phẩm nghệ thuật,
+                thể hiện sự tận tâm và kỹ năng của những người thợ lành nghề.
             </p>
+
+            <!-- Nút xem thêm -->
             <button class="btn">Khám phá thêm</button>
         </div>
     </div>
 </section>
 
+<!-- ===================== PHẦN HERO (BANNER CHÍNH) ===================== -->
 <section class="home-hero" style="display:flex;gap:40px;align-items:center;">
+
+    <!-- Nội dung hero -->
     <div style="max-width: 500px;">
         <h1 style="font-size: 2.5rem; font-weight: 700;">Khám phá hương vị cà phê SeeU</h1>
+
         <p style="font-size: 1.1rem; margin: 20px 0;">
             Tận hưởng những hạt cà phê chất lượng cao, rang xay thủ công và đầy đủ hương vị đặc trưng của Việt Nam.
         </p>
+
+        <!-- Nút điều hướng -->
         <div>
             <a href="/Product" class="btn" style="margin-right:12px;">Mua ngay</a>
             <a href="/Home/About" class="btn btn-outline">Xem thêm</a>
         </div>
     </div>
-    <img src="/img/logo.jpg" alt="Coffee SeeU" style="width:500px; height:500px; object-fit:cover; border-radius: 15px; box-shadow: 0 0 10px #0074f7;">
+
+    <!-- Hình ảnh hero -->
+    <img src="/img/logo.jpg"
+         alt="Coffee SeeU"
+         style="width:500px; height:500px; object-fit:cover; border-radius: 15px; box-shadow: 0 0 10px #0074f7;">
 </section>
 
-<!-- ==================== SẢN PHẨM NỔI BẬT ==================== -->
+<!-- ===================== SẢN PHẨM NỔI BẬT ===================== -->
 <section class="featured-products">
     <h2>Sản phẩm nổi bật</h2>
 
     <div class="products-grid">
+
+        <!-- Nếu controller trả về danh sách sản phẩm nổi bật -->
         @if (Model != null && Model.Any())
         {
             foreach (var product in Model)
             {
                 <div class="product-card">
+
+                    <!-- Ảnh sản phẩm -->
                     <img src="@product.ImageUrl" alt="@product.Name" />
+
+                    <!-- Tên sản phẩm -->
                     <h3>@product.Name</h3>
 
-                    <!-- ⭐ Hiển thị sao đánh giá -->
+                    <!-- Hiển thị 5 sao (theo Rating) -->
                     <div class="rating" style="margin: 5px 0;">
                         @for (int i = 1; i <= 5; i++)
                         {
-                            <span class="@(i <= product.Rating ? "text-warning" : "text-secondary")" style="font-size:18px;">★</span>
+                            <span class="@(i <= product.Rating ? "text-warning" : "text-secondary")"
+                                  style="font-size:18px;">★</span>
                         }
                     </div>
 
+                    <!-- Giá sản phẩm -->
                     <p class="product-price">@product.Price.ToString("N0")đ</p>
+
+                    <!-- Nút thêm giỏ (hiện tại chưa gắn AJAX) -->
                     <button class="btn">Thêm vào giỏ</button>
                 </div>
             }
         }
         else
         {
+            <!-- Không có sản phẩm nổi bật -->
             <p>Hiện chưa có sản phẩm nổi bật để hiển thị.</p>
         }
     </div>
 </section>
 
-<!-- CSS nhỏ cho sao -->
+<!-- CSS hỗ trợ cho hiển thị sao -->
 <style>
     .rating .text-warning {
         color: gold;

@@ -1,0 +1,78 @@
+﻿@model CoffeeSeeu.Models.Product
+@{
+    ViewData["Title"] = "Sửa sản phẩm";
+}
+
+<!-- ============================================================================
+     VIEW: Sửa thông tin sản phẩm (Admin)
+     - Hiển thị thông tin cũ của sản phẩm
+     - Cho phép cập nhật: tên, mô tả, giá, rating, ảnh
+     - Gửi dữ liệu POST → Admin/EditProduct
+============================================================================ -->
+
+<h2 class="mb-4">Sửa sản phẩm</h2>
+
+<!-- Form chỉnh sửa -->
+<form asp-action="EditProduct" method="post" enctype="multipart/form-data">
+
+    <!-- ID ẩn (giữ lại để cập nhật đúng sản phẩm) -->
+    <input type="hidden" asp-for="Id" />
+
+    <!-- Tên sản phẩm -->
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <!-- Mô tả sản phẩm -->
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+    </div>
+
+    <!-- Giá sản phẩm -->
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <!-- Điểm đánh giá -->
+    <div class="mb-3">
+        <label asp-for="Rating" class="form-label">Rating (0 - 5)</label>
+        <input asp-for="Rating"
+               class="form-control"
+               type="number"
+               min="0"
+               max="5" />
+    </div>
+
+    <!-- Ảnh hiện tại -->
+    <div class="mb-3">
+        <label class="form-label">Ảnh hiện tại</label>
+        <div>
+            <img src="@Model.ImageUrl"
+                 alt="@Model.Name"
+                 style="width:150px; height:100px; object-fit:cover; border-radius:6px;" />
+        </div>
+    </div>
+
+    <!-- Chọn ảnh mới -->
+    <div class="mb-3">
+        <label class="form-label">Thay ảnh mới (tùy chọn)</label>
+        <input type="file"
+               name="ImageFile"
+               accept="image/*"
+               class="form-control" />
+    </div>
+
+    <!-- Nút lưu + hủy -->
+    <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
+    <a asp-action="Products" class="btn btn-secondary ms-2">Hủy</a>
+</form>
+
+<!-- Scripts validation (kiểm tra dữ liệu client-side) -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
