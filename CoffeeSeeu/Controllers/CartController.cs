@@ -18,14 +18,13 @@ namespace CoffeeSeeu.Controllers
 
         public CartController(ApplicationDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         // GET: /Cart
         public IActionResult Index()
         {
             var cart = GetCartFromSession();
-            // convert to view model if needed; here pass List<CartItem>
             return View(cart);
         }
 
@@ -55,20 +54,22 @@ namespace CoffeeSeeu.Controllers
             SaveCartToSession(cart);
 
             // If AJAX header present, return JSON for backward compatibility
-            if (Request.Headers.TryGetValue("X-Requested-With", out var header) &&
-                header.Any(h => string.Equals(h, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase)))
+            // safe read of header
+            var xReqHeader = Request?.Headers?["X-Requested-With"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(xReqHeader) &&
+                string.Equals(xReqHeader, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase))
             {
                 return Json(new { success = true, cartCount = cart.Sum(c => c.Quantity) });
             }
 
-            var referer = Request.Headers["Referer"].ToString();
+            var referer = Request?.GetTypedHeaders()?.Referer?.ToString();
             if (!string.IsNullOrEmpty(referer)) return Redirect(referer);
             return RedirectToAction("Index", "Product");
         }
 
         // POST /Cart/AddAjax
         [HttpPost]
-        public async Task<IActionResult> AddAjax([FromBody] AddAjaxRequest req)
+        public async Task<IActionResult> AddAjax([FromBody] AddAjaxRequest? req)
         {
             if (req == null || req.ProductId <= 0) return BadRequest(new { success = false });
 
@@ -99,7 +100,7 @@ namespace CoffeeSeeu.Controllers
 
         // POST /Cart/UpdateQuantityAjax
         [HttpPost]
-        public IActionResult UpdateQuantityAjax([FromBody] UpdateQuantityRequest req)
+        public IActionResult UpdateQuantityAjax([FromBody] UpdateQuantityRequest? req)
         {
             if (req == null || req.ProductId <= 0) return BadRequest(new { success = false });
 
@@ -127,7 +128,7 @@ namespace CoffeeSeeu.Controllers
 
         // POST /Cart/RemoveAjax
         [HttpPost]
-        public IActionResult RemoveAjax([FromBody] RemoveAjaxRequest req)
+        public IActionResult RemoveAjax([FromBody] RemoveAjaxRequest? req)
         {
             if (req == null || req.ProductId <= 0) return BadRequest(new { success = false });
 
@@ -150,11 +151,27 @@ namespace CoffeeSeeu.Controllers
             return Json(new { cartCount = cart.Sum(c => c.Quantity) });
         }
 
-        // === Checkout (kept similar to yours, but uses session cart) ===
+        // === Checkout ===
         [HttpGet]
         public IActionResult Checkout()
         {
             var order = new Order();
+            // Prefill order fields if authenticated user has profile info
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                var username = User.Identity?.Name;
+                if (!string.IsNullOrEmpty(username))
+                {
+                    var user = _context.Users.FirstOrDefault(u => u.Username == username);
+                    if (user != null)
+                    {
+                        order.Username = username;
+                        order.CustomerName = user.FullName;
+                        order.Phone = user.Phone;
+                        // If you store address in User, set order.Address = user.Address;
+                    }
+                }
+            }
             return View(order);
         }
 
@@ -162,16 +179,43 @@ namespace CoffeeSeeu.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Checkout(Order order)
         {
-            if (!ModelState.IsValid) return View(order);
+            if (!ModelState.IsValid)
+            {
+                return View(order);
+            }
 
             var cart = GetCartFromSession();
             if (cart.Count == 0)
             {
-                ModelState.AddModelError("", "Giỏ hàng rỗng.");
+                ModelState.AddModelError(string.Empty, "Giỏ hàng rỗng.");
                 return View(order);
             }
 
-            order.Username = User.Identity?.Name;
+            // If user is authenticated, ensure profile complete (server-side)
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                var username = User.Identity?.Name;
+                if (!string.IsNullOrEmpty(username))
+                {
+                    var user = _context.Users.FirstOrDefault(u => u.Username == username);
+                    if (user != null)
+                    {
+                        bool complete = !string.IsNullOrWhiteSpace(user.FullName) &&
+                                        !string.IsNullOrWhiteSpace(user.Phone);
+                        if (!complete)
+                        {
+                            TempData["Error"] = "Bạn cần cập nhật thông tin cá nhân trước khi đặt hàng.";
+                            return RedirectToAction("EditProfile", "Account");
+                        }
+
+                        // enforce server-side values
+                        order.Username = username;
+                        order.CustomerName = user.FullName;
+                        order.Phone = user.Phone;
+                    }
+                }
+            }
+
             order.TotalPrice = cart.Sum(ci => ci.Price * ci.Quantity);
             order.CreatedAt = DateTime.UtcNow;
 
@@ -187,7 +231,7 @@ namespace CoffeeSeeu.Controllers
                     {
                         OrderId = order.Id,
                         ProductId = ci.ProductId,
-                        ProductName = ci.Name ?? "",
+                        ProductName = ci.Name ?? string.Empty,
                         UnitPrice = ci.Price,
                         Quantity = ci.Quantity
                     };
@@ -206,7 +250,7 @@ namespace CoffeeSeeu.Controllers
             catch
             {
                 tx.Rollback();
-                ModelState.AddModelError("", "Lỗi khi lưu đơn hàng, vui lòng thử lại.");
+                ModelState.AddModelError(string.Empty, "Lỗi khi lưu đơn hàng, vui lòng thử lại.");
                 return View(order);
             }
         }
@@ -216,8 +260,12 @@ namespace CoffeeSeeu.Controllers
         {
             try
             {
-                var json = HttpContext.Session.GetString(SessionKeyCart);
+                var session = HttpContext?.Session;
+                if (session == null) return new List<CartItem>();
+
+                var json = session.GetString(SessionKeyCart);
                 if (string.IsNullOrEmpty(json)) return new List<CartItem>();
+
                 var list = JsonSerializer.Deserialize<List<CartItem>>(json);
                 return list ?? new List<CartItem>();
             }
@@ -231,8 +279,11 @@ namespace CoffeeSeeu.Controllers
         {
             try
             {
-                var json = JsonSerializer.Serialize(cart);
-                HttpContext.Session.SetString(SessionKeyCart, json);
+                var session = HttpContext?.Session;
+                if (session == null) return;
+
+                var json = JsonSerializer.Serialize(cart ?? new List<CartItem>());
+                session.SetString(SessionKeyCart, json);
             }
             catch
             {

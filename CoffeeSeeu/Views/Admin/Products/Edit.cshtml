@@ -1,0 +1,51 @@
+﻿@model CoffeeSeeu.Models.Product
+@{
+    ViewData["Title"] = "Sửa sản phẩm";
+}
+
+<h2>Sửa sản phẩm</h2>
+
+<form asp-action="EditProduct" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Rating" class="form-label">Rating (0-5)</label>
+        <input asp-for="Rating" class="form-control" type="number" min="0" max="5" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Ảnh hiện tại</label>
+        <div>
+            <img src="@Model.ImageUrl" alt="@Model.Name" style="width:150px;height:100px;object-fit:cover;border-radius:6px;" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Thay ảnh mới (tuỳ chọn)</label>
+        <input type="file" name="ImageFile" accept="image/*" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
+    <a asp-action="Products" class="btn btn-secondary ms-2">Hủy</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,59 @@
+﻿@model List<CoffeeSeeu.Models.User>
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+    var q = ViewBag.Query as string ?? "";
+}
+
+<h2>Quản lý người dùng</h2>
+
+<div class="mb-3 d-flex justify-content-between">
+    <form class="d-flex" method="get" asp-action="Users">
+        <input name="q" value="@q" class="form-control me-2" placeholder="Tìm theo Tên..." />
+        <button class="btn btn-outline-secondary">Tìm</button>
+    </form>
+
+    <a class="btn btn-secondary" asp-controller="Admin" asp-action="Index">Dashboard</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Số điện thoại</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Username</td>
+                <td>@u.Email</td>
+                <td>@u.Role</td>
+                <td>@u.Phone</td>
+                <td style="white-space:nowrap;">
+                    <form asp-action="ChangeRole" method="post" style="display:inline-block; margin-right:6px;">
+                        <input type="hidden" name="id" value="@u.Id" />
+                        <select name="role" class="form-select form-select-sm d-inline-block" style="width:auto; display:inline-block;">
+                            <option value="User" selected="@(u.Role == "User")">User</option>
+                            <option value="Admin" selected="@(u.Role == "Admin")">Admin</option>
+                        </select>
+                        <button class="btn btn-sm btn-primary ms-1" type="submit">Lưu</button>
+                    </form>
+
+                    <form asp-action="DeleteUser" method="post" style="display:inline" onsubmit="return confirm('Xác nhận xóa tài khoản?');">
+                        <input type="hidden" name="id" value="@u.Id" />
+                        <button class="btn btn-sm btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

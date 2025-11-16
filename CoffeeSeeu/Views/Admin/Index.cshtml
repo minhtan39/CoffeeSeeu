@@ -1,12 +1,33 @@
-﻿@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor HttpContextAccessor
-
-@{
+﻿@{
     ViewData["Title"] = "Trang quản trị";
-    var username = HttpContextAccessor.HttpContext.Session.GetString("Username");
 }
 
-<div class="container mt-5">
-    <h1>Chào mừng, @username!</h1>
-    <p>Bạn đang đăng nhập với quyền <strong>Admin</strong>.</p>
+<h1 class="mb-4">Chào mừng, admin!</h1>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card p-3">
+            <h5>Sản phẩm</h5>
+            <p class="display-6">@ViewBag.ProductCount</p>
+            <a class="btn btn-sm btn-outline-primary" asp-action="Products">Quản lý sản phẩm</a>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <h5>Người dùng</h5>
+            <p class="display-6">@ViewBag.UserCount</p>
+            <a class="btn btn-sm btn-outline-primary" asp-action="Users">Quản lý tài khoản</a>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <h5>Đơn hàng</h5>
+            <p class="display-6">@ViewBag.OrderCount</p>
+            <a class="btn btn-sm btn-outline-primary" asp-controller="Admin" asp-action="Index">Xem đơn hàng</a>
+        </div>
+    </div>
 </div>
+
+<hr />
+
+

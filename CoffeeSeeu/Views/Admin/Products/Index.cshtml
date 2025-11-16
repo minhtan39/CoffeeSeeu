@@ -1,0 +1,55 @@
+﻿@model List<CoffeeSeeu.Models.Product>
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+    var q = ViewBag.Query as string ?? "";
+}
+
+<h2>Quản lý sản phẩm</h2>
+
+<div class="mb-3 d-flex justify-content-between">
+    <form class="d-flex" method="get" asp-action="Products">
+        <input name="q" value="@q" class="form-control me-2" placeholder="Tìm theo tên..." />
+        <button class="btn btn-outline-secondary">Tìm</button>
+    </form>
+
+    <a class="btn btn-success" asp-action="CreateProduct">+ Thêm sản phẩm</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ảnh</th>
+            <th>Tên</th>
+            <th>Giá</th>
+            <th>Rating</th>
+            <th>Mô tả</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td style="width:100px;">
+                    <img src="@p.ImageUrl" alt="@p.Name" style="width:80px;height:60px;object-fit:cover;border-radius:6px;" />
+                </td>
+                <td>@p.Name</td>
+                <td>@String.Format("{0:N0} VND", p.Price)</td>
+                <td>@p.Rating</td>
+                <td style="max-width:360px;">@p.Description</td>
+                <td style="white-space:nowrap;">
+                    <a class="btn btn-sm btn-primary me-1" asp-action="EditProduct" asp-route-id="@p.Id">Sửa</a>
+
+                    <form asp-action="DeleteProduct" asp-route-id="@p.Id" method="post" style="display:inline" onsubmit="return confirm('Xác nhận xóa sản phẩm này?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

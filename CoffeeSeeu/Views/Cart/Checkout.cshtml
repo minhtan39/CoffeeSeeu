@@ -1,22 +1,52 @@
 ﻿@model CoffeeSeeu.Models.Order
 
+@{
+    // ViewBag.IsAuthenticated, ViewBag.IsProfileComplete, ViewBag.UserProfile được set trong controller
+    var isAuth = ViewBag.IsAuthenticated as bool? ?? false;
+    var isComplete = ViewBag.IsProfileComplete as bool? ?? false;
+    var profile = ViewBag.UserProfile as CoffeeSeeu.Models.User;
+}
+
 <h2>Thông tin thanh toán</h2>
 
-<form asp-action="Checkout" method="post">
-    <div class="form-group">
-        <label for="CustomerName">Họ tên</label>
-        <input asp-for="CustomerName" class="form-control" />
+<!-- Nếu user đã đăng nhập nhưng profile chưa đầy đủ -> hiển thị cảnh báo bắt buộc -->
+@if (isAuth && !isComplete)
+{
+    <div class="alert alert-warning">
+        <strong>Chú ý:</strong> Bạn chưa cập nhật đầy đủ thông tin cá nhân (họ tên, số điện thoại).
+        Vui lòng <a asp-controller="Account" asp-action="EditProfile">cập nhật thông tin</a> trước khi đặt hàng.
     </div>
+    <p>
+        <a asp-controller="Account" asp-action="EditProfile" class="btn btn-primary">Cập nhật thông tin</a>
+        <a asp-controller="Cart" asp-action="Index" class="btn btn-secondary">Quay lại giỏ hàng</a>
+    </p>
+}
+else
+{
+    <!-- Hiển thị form cho cả: (1) guest (chưa đăng nhập) và (2) user đã đăng nhập và profile đầy đủ -->
+    <form asp-action="Checkout" method="post">
+        <div class="form-group">
+            <label for="CustomerName">Họ tên</label>
+            <input asp-for="CustomerName" class="form-control" value="@(profile != null ? profile.FullName : Model.CustomerName)" />
+            <span asp-validation-for="CustomerName" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label for="Address">Địa chỉ</label>
-        <input asp-for="Address" class="form-control" />
-    </div>
+        <div class="form-group">
+            <label for="Address">Địa chỉ</label>
+            <input asp-for="Address" class="form-control" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label for="Phone">Số điện thoại</label>
-        <input asp-for="Phone" class="form-control" />
-    </div>
+        <div class="form-group">
+            <label for="Phone">Số điện thoại</label>
+            <input asp-for="Phone" class="form-control" value="@(profile != null ? profile.Phone : Model.Phone)" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Xác nhận đặt hàng</button>
-</form>
+        <button type="submit" class="btn btn-primary">Xác nhận đặt hàng</button>
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
